@@ -1,44 +1,50 @@
 // src/components/NavBar.tsx
 import { Link } from 'react-router-dom'
+import { IoPersonCircleSharp } from "react-icons/io5";
+import { FaShoppingBasket } from "react-icons/fa";
 
 function NavBar() {
   return (
-    <nav className="bg-bgtheme">
+    <nav className="bg-bgtheme sticky top-0 z-50">
       <div className="max-w-8xl border-b-2 border-night mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link to="/home" className="text-2xl font-bold text-orange">
+            <Link to="/home" className="text-2xl md:text-4xl font-bold text-orange">
               Pizza Shop
             </Link>
-          </div>
+            </div>
           
-          {/* Navigation Links */}
+          
+          {/* Navigation Links - Center */}
           <div className="flex space-x-4">
             <Link 
-              to="/home" 
-              className="hover:text-glow px-3 py-2 rounded-md transition text-orange"
-            >
-              Home
-            </Link>
-            <Link 
               to="/menu" 
-              className="hover:text-glow px-3 py-2 rounded-md transition text-orange"
+              className="hover:text-glow font-bold text-base sm:text-xl md:text-2xl px-3 py-2 rounded-md transition text-orange"
             >
               Menu
             </Link>
             <Link 
               to="/about" 
-              className="hover:text-glow px-3 py-2 rounded-md transition text-orange"
+              className="hover:text-glow font-bold text-base sm:text-xl md:text-2xl px-3 py-2 rounded-md transition text-orange"
             >
               About
             </Link>
+            </div>
+            
+            <div className="flex items-center space-x-4">
               <Link 
-              to="/about" 
-              className="hover:text-glow px-3 py-2 rounded-md transition text-orange"
+              to="/login" 
+              className="hover:text-glow text-base sm:text-xl md:text-2xl px-3 py-2 rounded-md transition text-orange"
             >
-              Login
+              <IoPersonCircleSharp className="text-2xl sm:text-3xl md:text-4xl" />
+            </Link>
+               <Link 
+              to="/cart" 
+              className="hover:text-glow text-base sm:text-xl md:text-2xl px-3 py-2 rounded-md transition text-orange"
+            >
+              <FaShoppingBasket className="text-2xl sm:text-3xl md:text-4xl" />
             </Link>
           </div>
           
