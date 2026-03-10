@@ -1,12 +1,12 @@
-// src/components/NavBar.tsx
+// src/components/Navbar.tsx
 import { Link } from 'react-router-dom'
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { FaShoppingBasket } from "react-icons/fa";
 
-function NavBar() {
+function Navbar() {
   return (
     <nav className="bg-bgtheme sticky top-0 z-50">
-      <div className="max-w-8xl border-b-2 border-night mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full border-b-2 border-night mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo/Brand */}
@@ -54,4 +54,4 @@ function NavBar() {
   )
 }
 
-export default NavBar
+export default Navbar

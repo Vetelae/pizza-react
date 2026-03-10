@@ -12,7 +12,7 @@ function Menu() {
           Pizzas
     </h2> 
     <div className="flex-1 flex items-center justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+        <div className="grid grid-cols-1 mb-12 md:grid-cols-3 gap-6 w-full max-w-6xl">
           
           <div className="bg-orange rounded-lg border-2 border-black shadow-mds p-6 flex flex-col">
             <h2 className="text-black font-bold text-xl md:text-2xl mb-4">Margherita #1</h2>
