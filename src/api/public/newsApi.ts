@@ -1,5 +1,5 @@
-import axiosClient from './axiosClient'
-import type { News } from '../types/news'
+import axiosClient from '../axiosClient'
+import type { News } from '../../types/news'
 
 export const newsApi = {
     // GET all news
