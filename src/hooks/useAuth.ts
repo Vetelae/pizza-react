@@ -5,14 +5,15 @@ import { useAuthStore } from '../store/authStore'
 import type { LoginDto, RegisterDto } from '../types/auth'
 
 export const useLogin = () => {
-  const { setTokens } = useAuthStore()
+  const { setTokens, closeLogin } = useAuthStore()
   const navigate = useNavigate()
 
   return useMutation({
     mutationFn: (data: LoginDto) => authApi.login(data),
     onSuccess: ({ data }) => {
       setTokens(data.token, data.refreshToken, data.userId)
-      navigate('/') 
+      closeLogin()
+      navigate('/')
     },
   })
 }
@@ -25,7 +26,7 @@ export const useLogout = () => {
     mutationFn: () => authApi.logout({ refreshToken: refreshToken! }),
     onSettled: () => {
       clearAuth()
-      navigate('/login')
+      navigate('/home')
     },
   })
 }
