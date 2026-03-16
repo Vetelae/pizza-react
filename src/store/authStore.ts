@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface AuthState {
   token: string | null
@@ -8,6 +8,11 @@ interface AuthState {
   isAuthenticated: boolean
   setTokens: (token: string, refreshToken: string, userId: string) => void
   clearAuth: () => void
+
+  // UI
+  isLoginOpen: boolean
+  openLogin: () => void
+  closeLogin: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -21,7 +26,22 @@ export const useAuthStore = create<AuthState>()(
         set({ token, refreshToken, userId, isAuthenticated: true }),
       clearAuth: () =>
         set({ token: null, refreshToken: null, userId: null, isAuthenticated: false }),
+
+      // UI
+      isLoginOpen: false,
+      openLogin: () => set({ isLoginOpen: true }),
+      closeLogin: () => set({ isLoginOpen: false }),
     }),
-    { name: 'auth' } // persists to localStorage automatically
+    { 
+      name: 'auth',
+      storage: createJSONStorage(() => localStorage),
+      // only persist auth fields, not ui state
+      partialize: (state) => ({
+        token: state.token,
+        refreshToken: state.refreshToken,
+        userId: state.userId,
+        isAuthenticated: state.isAuthenticated,
+      }), 
+    }
   )
 )

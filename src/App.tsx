@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Footer from './components/Footer'
+import LoginPanel from './components/auth/LoginPanel'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/menu" element={<Menu />} />
       </Routes>
       </main>
+      <LoginPanel />
 
       <Footer />
     </div>
