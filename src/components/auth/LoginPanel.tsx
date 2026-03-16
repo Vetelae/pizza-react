@@ -58,7 +58,7 @@ export default function LoginPanel() {
           ${isLoginOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Sign in</h2>
           <button
             onClick={onClose}
@@ -70,6 +70,10 @@ export default function LoginPanel() {
           </button>
         </div>
 
+        <div className="flex items-center justify-between mb-8">
+        <p className="text-sm font-semibold text-zinc-900">Sign in with your email and password.</p>
+        </div>
+        
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
           <div className="flex flex-col gap-1.5">
@@ -100,12 +104,6 @@ export default function LoginPanel() {
               <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
                 Password
               </label>
-              <button
-                type="button"
-                className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-              >
-                Forgot password?
-              </button>
             </div>
             <input
               type="password"
@@ -143,6 +141,26 @@ export default function LoginPanel() {
           >
             {isPending ? 'Signing in…' : 'Sign in'}
           </button>
+               <button
+                type="button"
+                className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+              >
+                Forgot password?
+              </button>
+
+              <hr className="text-zinc-400 mt-5"></hr>
+
+              <div className="flex items-center justify-center mt-5">
+          <p className="text-zinc-900 font-semibold" >
+            Don’t have an account yet?
+          </p>
+          </div>
+          <button
+                type="button"
+                className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+              >
+                Register here
+              </button>
         </form>
       </aside>
     </>
