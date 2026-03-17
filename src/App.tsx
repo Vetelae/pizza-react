@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Footer from './components/Footer'
 import LoginPanel from './components/auth/LoginPanel'
+import ConfirmEmailPage from './pages/ConfirmEmail'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
+        <Route path="/confirm-email" element={<ConfirmEmailPage />} />  
       </Routes>
       </main>
       <LoginPanel />

@@ -4,6 +4,7 @@ import { authApi } from '../api/public/authApi'
 import { useAuthStore } from '../store/authStore'
 import type { LoginDto, RegisterDto } from '../types/auth'
 
+// useLogin
 export const useLogin = () => {
   const { setTokens, closeLogin } = useAuthStore()
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ export const useLogin = () => {
   })
 }
 
+// useLogout
 export const useLogout = () => {
   const { refreshToken, clearAuth } = useAuthStore()
   const navigate = useNavigate()
@@ -31,8 +33,22 @@ export const useLogout = () => {
   })
 }
 
+// useRegister
 export const useRegister = () => {
   return useMutation({
     mutationFn: (data: RegisterDto) => authApi.register(data),
+  })
+}
+
+// useConfirmEmail
+export const useConfirmEmail = () => {
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: ({ userId, token }: { userId: string; token: string }) =>
+      authApi.confirmEmail(userId, token),
+    onSuccess: () => {
+      setTimeout(() => navigate('/'), 5173)
+    },
   })
 }
