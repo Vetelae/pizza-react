@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '../api/public/authApi'
 import { useAuthStore } from '../store/authStore'
-import type { LoginDto, RegisterDto } from '../types/auth'
+import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from '../types/auth'
 
 // useLogin
 export const useLogin = () => {
@@ -48,7 +48,26 @@ export const useConfirmEmail = () => {
     mutationFn: ({ userId, token }: { userId: string; token: string }) =>
       authApi.confirmEmail(userId, token),
     onSuccess: () => {
-      setTimeout(() => navigate('/'), 5173)
+      setTimeout(() => navigate('/'), 3000)
+    },
+  })
+}
+
+// useForgotPassword
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (data: ForgotPasswordDto) => authApi.forgotPassword(data),
+  })
+}
+
+// useResetPassword
+export const useResetPassword = () => {
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: (data: ResetPasswordDto) => authApi.resetPassword(data),
+    onSuccess: () => {
+      setTimeout(() => navigate('/'), 3000)
     },
   })
 }

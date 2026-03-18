@@ -3,8 +3,9 @@ import { useAuthStore } from '@/store/authStore'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 import VerifyEmail from './VerifyEmail'
+import ForgotPasswordForm from './ForgotPasswordForm'
 
-type View = 'login' | 'register' | 'verify'
+type View = 'login' | 'register' | 'verify' | 'forgot'
 
 export default function LoginPanel() {
   const [view, setView] = useState<View>('login')
@@ -17,10 +18,11 @@ export default function LoginPanel() {
     return () => document.removeEventListener('keydown', handler)
   }, [isLoginOpen])
 
+  // Hide scroll when loginpanel is open
   useEffect(() => {
-    document.body.style.overflow = isLoginOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [isLoginOpen])
+  document.documentElement.style.overflow = isLoginOpen ? 'hidden' : ''
+  return () => { document.documentElement.style.overflow = '' }
+}, [isLoginOpen])
 
   const onClose = () => {
     closeLogin()
@@ -53,6 +55,7 @@ export default function LoginPanel() {
             {view === 'login' && 'Sign in'}
             {view === 'register' && 'Create account'}
             {view === 'verify' && 'Check your email'}
+            {view === 'forgot' && 'Reset password'}
           </h2>
           <button
             onClick={onClose}
@@ -66,16 +69,20 @@ export default function LoginPanel() {
 
         {/* View switcher */}
         {view === 'login' && (
-          <LoginForm onRegisterClick={() => setView('register')} />
+          <LoginForm onRegisterClick={() => setView('register')}
+          onForgotClick={() => setView('forgot')}
+           />
         )}
         {view === 'register' && (
           <RegisterForm
           onLoginClick={() => setView('login')}
-          onVerifyClick={() => setView('verify')}
-  />
+          onVerifyClick={() => setView('verify')} />
         )}
         {view === 'verify' && (
           <VerifyEmail onLoginClick={() => setView('login')} />
+        )}
+        {view === 'forgot' && (
+          <ForgotPasswordForm onLoginClick={() => setView('login')} />
         )}
       </aside>
     </>
