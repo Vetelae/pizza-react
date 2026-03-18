@@ -4,9 +4,10 @@ import type { LoginDto } from '@/types/auth'
 
 interface LoginFormProps {
   onRegisterClick: () => void
+  onForgotClick: () => void
 }
 
-export default function LoginForm({ onRegisterClick }: LoginFormProps) {
+export default function LoginForm({ onRegisterClick, onForgotClick }: LoginFormProps) {
   const { mutate: login, isPending, error } = useLogin()
 
   const {
@@ -91,6 +92,7 @@ export default function LoginForm({ onRegisterClick }: LoginFormProps) {
 
         <button
           type="button"
+          onClick={onForgotClick}
           className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
         >
           Forgot password?

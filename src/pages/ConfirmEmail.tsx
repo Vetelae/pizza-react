@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useConfirmEmail } from '@/hooks/useAuth'
 
-export default function ConfirmEmailPage() {
+export default function ConfirmEmail() {
   const [searchParams] = useSearchParams()
   const { mutate: confirmEmail, isPending, isError, isSuccess } = useConfirmEmail()
 
