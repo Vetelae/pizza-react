@@ -40,8 +40,6 @@ button {
   transition: border-color 0.25s;
 }
 
-
-
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -60,5 +58,4 @@ button:focus-visible {
   --color-oat: #846E56;
   --color-orange: #f5a442;
   --color-bgtheme: #242424;
-
 }
