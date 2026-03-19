@@ -22,16 +22,18 @@ export default function ResetPasswordForm() {
     resetPassword({ ...data, email, token })
   }
 
+  // View when invalid reset link
   if (!token || !email) {
     return (
       <div className="flex flex-col gap-6 max-w-sm mx-auto mt-16 px-4">
-        <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded-lg">
-          Invalid or missing reset link. Please request a new one.
+        <p className="text-xl text-center font-bold text-red-500 px-3 py-2 rounded-lg">
+          Invalid or missing reset link.
+         <br/>Please request a new one.
         </p>
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+          className="text-xs bg-gray-700 text-orange hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors mt-10"
         >
           Back to home
         </button>
@@ -39,30 +41,31 @@ export default function ResetPasswordForm() {
     )
   }
 
+  // View when password reset success
   if (isSuccess) {
     return (
-      <div className="flex flex-col gap-6 max-w-sm mx-auto mt-16 px-4">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Your password has been reset successfully.
-        </p>
-
-        <hr className="text-zinc-400" />
-
-        <div className="flex items-center justify-center">
-          <p className="text-zinc-900 dark:text-zinc-50 font-semibold">
-            Ready to sign in?
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-        >
-          Sign in here
-        </button>
-      </div>
-    )
+  <div className="flex flex-col gap-6 max-w-sm mx-auto mt-16 px-4">
+    <p className="text-xl text-center font-bold text-green-600 px-3 py-2 rounded-lg">
+      Your password has been reset successfully.
+    </p>
+    <hr className="text-zinc-400" />
+    <div className="flex items-center justify-center">
+      <p className="text-zinc-900 dark:text-zinc-50 font-semibold">
+        Ready to sign in?
+      </p>
+    </div>
+    <button
+      type="button"
+      onClick={() => navigate('/')}
+      className="mt-1 bg-gray-700 text-orange
+          rounded-lg py-2.5 text-sm font-medium
+          hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors
+          disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      Sign in here
+    </button>
+  </div>
+)
   }
 
   return (
@@ -71,6 +74,7 @@ export default function ResetPasswordForm() {
       className="flex flex-col gap-5 max-w-sm mx-auto mt-16 px-4"
       noValidate
     >
+      <p className="text-lg font-semibold text-zinc-900 mb-5">Set your new password</p>
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
           New password
@@ -126,9 +130,9 @@ export default function ResetPasswordForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="mt-1 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900
+        className="mt-1 bg-gray-700 text-orange
           rounded-lg py-2.5 text-sm font-medium
-          hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors
+          hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors
           disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? 'Resetting…' : 'Reset password'}
