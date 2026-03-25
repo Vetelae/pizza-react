@@ -1,23 +1,19 @@
 import { useMenuItems } from '../hooks/useMenuItems'
+import { useCategories } from '../hooks/useCategories'
 import { useEffect, useRef, useState } from 'react'
-import pizzaCategory from '../assets/images/pizzaCategory.png'
-import kebabCategory from '../assets/images/kebabCategory.png'
-import saladCategory from '../assets/images/saladCategory.png'
-import sidesCategory from '../assets/images/sidesCategory.png'
-import drinkCategory from '../assets/images/drinkCategory.png'
-
-const CATEGORIES = [
-  { label: 'Pizzas', image: pizzaCategory, id: 1 },
-  { label: 'Kebabs', image: kebabCategory, id: 2 },
-  { label: 'Salads', image: saladCategory, id: 3 },
-  { label: 'Sides', image: sidesCategory, id: 4 },
-  { label: 'Drinks', image: drinkCategory, id: 5 },
-]
 
 function Menu() {
-  const { data: menuItems, isLoading, isError } = useMenuItems()
-  const [activeCategory, setActiveCategory] = useState(1)
+  const { data: menuItems, isLoading: menuItemsLoading, isError: menuItemsError } = useMenuItems()
+  const { data: categories, isLoading: categoriesLoading, isError: categoriesError } = useCategories()
+  const [activeCategory, setActiveCategory] = useState<number | null>(null)
   const stickyNavRef = useRef<HTMLDivElement>(null)
+
+    // Set first category as active once categories load
+  useEffect(() => {
+    if (categories && categories.length > 0) {
+      setActiveCategory(categories[0].id)
+    }
+  }, [categories])
 
   const scrollToSection = (id: number) => {
     const el = document.getElementById(String(id))
@@ -32,12 +28,13 @@ function Menu() {
 
   // Highlight active section on scroll
   useEffect(() => {
+    if (!categories) return
     const handleScroll = () => {
       const navHeight = 64
       const stickyHeight = stickyNavRef.current?.offsetHeight ?? 0
       const offset = navHeight + stickyHeight + 24
 
-      for (const cat of [...CATEGORIES].reverse()) {
+      for (const cat of [...categories].reverse()) {
         const el = document.getElementById(String(cat.id))
         if (el && el.getBoundingClientRect().top <= offset) {
           setActiveCategory(cat.id)
@@ -47,7 +44,10 @@ function Menu() {
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [categories])
+
+  const isLoading = menuItemsLoading || categoriesLoading
+  const isError = menuItemsError || categoriesError
 
   return (
     <div className="min-h-screen mt-10">
@@ -59,7 +59,7 @@ function Menu() {
       >
         <div className="bg-gray-900/95 backdrop-blur border-b border-orange/30 shadow-lg shadow-black/40">
           <div className="flex items-center justify-center gap-1 px-4 py-2 max-w-3xl mx-auto">
-            {CATEGORIES.map((cat) => (
+            {categories?.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => scrollToSection(cat.id)}
@@ -71,8 +71,12 @@ function Menu() {
                     : 'text-orange hover:bg-orange/15'}
                 `}
               >
-                <img src={cat.image} alt={cat.label} className="w-10 h-10 rounded-full object-cover" />
-                {cat.label}
+                <img
+                  src={`${import.meta.env.VITE_BASE_URL}${cat.imagePath}`}
+                  alt={cat.name}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                {cat.name}
               </button>
             ))}
           </div>
@@ -86,13 +90,13 @@ function Menu() {
       {isError && <p className="text-orange">Failed to load menu.</p>}
 
       {/* ── Menu sections ── */}
-{CATEGORIES.map((cat) => (
+{categories?.map((cat) => (
   <div key={cat.id} id={String(cat.id)} className="mt-5 scroll-mt-32">
     <div className="flex-1 flex items-center justify-center">
       <div className="grid grid-cols-1 mb-12 md:grid-cols-4 gap-6 w-full max-w-6xl">
 
         <h2 className="underline underline-offset-4 text-4xl font-semibold text-left mb-2 text-orange col-span-full">
-          {cat.label}
+          {cat.name}
         </h2>
 
         {menuItems
