@@ -6,13 +6,17 @@ import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from 
 
 // useLogin
 export const useLogin = () => {
-  const { setTokens, closeLogin } = useAuthStore()
+  const { setAuth, closeLogin } = useAuthStore()
   const navigate = useNavigate()
 
   return useMutation({
     mutationFn: (data: LoginDto) => authApi.login(data),
     onSuccess: ({ data }) => {
-      setTokens(data.token, data.refreshToken, data.userId)
+      setAuth(data.token, data.refreshToken, {
+        id: data.userId,
+        email: data.email,
+        role: data.role as 'Admin' | 'Guest',
+      })
       closeLogin()
       navigate('/')
     },
@@ -42,13 +46,29 @@ export const useRegister = () => {
 
 // useConfirmEmail
 export const useConfirmEmail = () => {
+  const setAuth = useAuthStore(state => state.setAuth)
+  const setEmailConfirmStatus = useAuthStore(state => state.setEmailConfirmStatus)
   const navigate = useNavigate()
 
   return useMutation({
-    mutationFn: ({ userId, token }: { userId: string; token: string }) =>
-      authApi.confirmEmail(userId, token),
-    onSuccess: () => {
+    mutationFn: ({ userId, token }: { userId: string; token: string }) => {
+      setEmailConfirmStatus('pending')
+      return authApi.confirmEmail(userId, token)
+    },
+    onSuccess: (response) => {
+      const data = response.data
+      if (data.token && data.email && data.userId) {
+        setAuth(data.token, data.refreshToken ?? '', {
+          id: data.userId,
+          email: data.email,
+          role: (data.role as 'Admin' | 'Guest') ?? 'Guest',
+        })
+      }
+      setEmailConfirmStatus('success')
       setTimeout(() => navigate('/'), 3000)
+    },
+    onError: () => {
+      setEmailConfirmStatus('error')
     },
   })
 }
