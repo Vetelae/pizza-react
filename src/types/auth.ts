@@ -1,4 +1,11 @@
 // Request DTOs
+
+export interface User {
+  id: string
+  email: string
+  role: 'Admin' | 'Guest'
+}
+
 export interface RegisterDto {
   email: string
   password: string
@@ -31,6 +38,8 @@ export interface AuthResponseDto {
   success: boolean
   message: string
   userId: string
+  email: string
   token: string
   refreshToken: string
+  role: string
 }
