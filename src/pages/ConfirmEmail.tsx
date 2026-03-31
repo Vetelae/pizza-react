@@ -1,33 +1,24 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useConfirmEmail } from '@/hooks/useAuth'
-import { useAuthStore } from '@/store/authStore'
-
-let emailConfirmationFired = false
 
 export default function ConfirmEmail() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { mutate: confirmEmail } = useConfirmEmail()
-  const status = useAuthStore(state => state.emailConfirmStatus)
-  const setEmailConfirmStatus = useAuthStore(state => state.setEmailConfirmStatus)
+  const { mutate: confirmEmail, isPending, isSuccess, isError } = useConfirmEmail()
+  const hasFired = useRef(false)
 
   const userId = searchParams.get('userId')
   const token = searchParams.get('token')
 
   useEffect(() => {
-    setEmailConfirmStatus('idle')
-    emailConfirmationFired = false
-  }, [])
-
-  useEffect(() => {
     if (!userId || !token) return
-    if (emailConfirmationFired) return
-    emailConfirmationFired = true
+    if (hasFired.current) return
+    hasFired.current = true
     confirmEmail({ userId, token })
   }, [userId, token, confirmEmail])
 
-  if (status === 'idle' || status === 'pending')
+  if (isPending || (!isSuccess && !isError))
     return (
       <div className="flex flex-col gap-6 max-w-sm mx-auto mt-20 px-4">
         <p className="text-xl text-center font-bold text-green-600 px-3 py-2 rounded-lg">
@@ -36,7 +27,7 @@ export default function ConfirmEmail() {
       </div>
     )
 
-  if (status === 'error')
+  if (isError)
     return (
       <div className="flex flex-col gap-6 max-w-sm mx-auto mt-16 px-4">
         <p className="text-xl text-center font-bold text-red-500 px-3 py-2 rounded-lg">
@@ -54,7 +45,7 @@ export default function ConfirmEmail() {
       </div>
     )
 
-  if (status === 'success')
+  if (isSuccess)
     return (
       <div className="flex flex-col gap-6 max-w-sm mx-auto mt-20 px-4">
         <p className="text-xl text-center font-bold text-green-600 px-3 py-2 rounded-lg">

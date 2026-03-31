@@ -13,10 +13,6 @@ interface AuthState {
   clearAuth: () => void
   isAdmin: () => boolean
 
-  // Email confirmation
-  emailConfirmStatus: 'idle' | 'pending' | 'success' | 'error'
-  setEmailConfirmStatus: (status: 'idle' | 'pending' | 'success' | 'error') => void
-
   // UI
   isLoginOpen: boolean
   openLogin: () => void
@@ -42,10 +38,6 @@ export const useAuthStore = create<AuthState>()(
         set({ token: null, refreshToken: null, userId: null, isAuthenticated: false, user: null }),
 
       isAdmin: () => get().user?.role === 'Admin',
-
-      // Email confirmation
-      emailConfirmStatus: 'idle',
-      setEmailConfirmStatus: (status) => set({ emailConfirmStatus: status }),
 
       // UI
       isLoginOpen: false,

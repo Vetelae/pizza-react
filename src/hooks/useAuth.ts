@@ -47,14 +47,11 @@ export const useRegister = () => {
 // useConfirmEmail
 export const useConfirmEmail = () => {
   const setAuth = useAuthStore(state => state.setAuth)
-  const setEmailConfirmStatus = useAuthStore(state => state.setEmailConfirmStatus)
   const navigate = useNavigate()
 
   return useMutation({
-    mutationFn: ({ userId, token }: { userId: string; token: string }) => {
-      setEmailConfirmStatus('pending')
-      return authApi.confirmEmail(userId, token)
-    },
+    mutationFn: ({ userId, token }: { userId: string; token: string }) =>
+      authApi.confirmEmail(userId, token),   // pure — no side effects here
     onSuccess: (response) => {
       const data = response.data
       if (data.token && data.email && data.userId) {
@@ -64,11 +61,7 @@ export const useConfirmEmail = () => {
           role: (data.role as 'Admin' | 'Guest') ?? 'Guest',
         })
       }
-      setEmailConfirmStatus('success')
       setTimeout(() => navigate('/'), 3000)
-    },
-    onError: () => {
-      setEmailConfirmStatus('error')
     },
   })
 }
