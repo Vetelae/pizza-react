@@ -7,8 +7,8 @@ const axiosClient = axios.create({
 })
 
 axiosClient.interceptors.request.use(config => {
-  const token = useAuthStore.getState().token  // getState() works outside React
-  if (token && config.url?.includes('/admin')) {
+  const token = useAuthStore.getState().token
+  if (token && config.url?.includes('admin')) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
