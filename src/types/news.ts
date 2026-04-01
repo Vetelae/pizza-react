@@ -6,3 +6,4 @@ export interface News {
 }
 
 export type NewsCreate = Omit<News, 'id'>
+export type NewsUpdate = NewsCreate
