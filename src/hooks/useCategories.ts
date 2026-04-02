@@ -7,3 +7,10 @@ export const useCategories = () => {
         queryFn: categoriesApi.getAll,
     })
 }
+
+export const useCategoryById = (id: number) => {
+    return useQuery({
+        queryKey: ['categories', id],
+        queryFn: () => categoriesApi.getById(id),
+    })
+}

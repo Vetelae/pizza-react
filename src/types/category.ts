@@ -8,4 +8,9 @@ export interface Category {
     menuItems?: MenuItem[]
 }
 
+export interface CategoryImageUploadResponse {
+    imagePath: string
+}
+
 export type CategoryCreate = Omit<Category, 'id' | 'menuItems'>
+export type CategoryUpdate = CategoryCreate
