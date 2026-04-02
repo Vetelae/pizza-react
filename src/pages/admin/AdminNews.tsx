@@ -56,7 +56,7 @@ const handleSubmit = (data: NewsFormValues) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">News</h1>
+        <h1 className="text-2xl font-semibold">News</h1>
         <button
           onClick={handleAdd}
           className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
