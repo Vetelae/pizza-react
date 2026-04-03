@@ -7,23 +7,26 @@ import type {
 export const authApi = {
   // REGISTER
   register: (data: RegisterDto) =>
-    axiosClient.post('/auth/register', data),
+    axiosClient.post('/auth/register', data, { skipAuth: true }),
 
   // CONFIRM EMAIL
   confirmEmail: (userId: string, token: string) =>
-    axiosClient.post('/auth/confirm-email', null, { params: { userId, token } }),
+    axiosClient.post('/auth/confirm-email', null, { 
+      params: { userId, token },
+      skipAuth: true 
+    }),
 
   // LOGIN
   login: (data: LoginDto) =>
-    axiosClient.post<AuthResponseDto>('/auth/login', data),
+    axiosClient.post<AuthResponseDto>('/auth/login', data, { skipAuth: true }),
 
   // FORGOT PASSWORD
   forgotPassword: (data: ForgotPasswordDto) =>
-    axiosClient.post('/auth/forgot-password', data),
+    axiosClient.post('/auth/forgot-password', data, { skipAuth: true }),
 
   // RESET PASSWORD
   resetPassword: (data: ResetPasswordDto) =>
-    axiosClient.post('/auth/reset-password', data),
+    axiosClient.post('/auth/reset-password', data, { skipAuth: true }),
 
   // REFRESH
   refresh: (data: RefreshTokenRequestDto) =>
