@@ -12,4 +12,8 @@ export interface MenuItem {
     imageFileName: string | null;
 }
 
+export type MenuItemImageUploadResponse = {
+  imagePath: string
+}
+
 export type MenuItemCreate = Omit<MenuItem, 'id' | 'category'>
