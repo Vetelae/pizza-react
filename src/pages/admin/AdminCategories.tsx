@@ -1,4 +1,3 @@
-// pages/admin/AdminCategories.tsx
 import { useState } from "react";
 import { useCategories } from "@/hooks/useCategories";
 import {
