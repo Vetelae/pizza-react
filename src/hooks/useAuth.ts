@@ -27,9 +27,10 @@ export const useLogin = () => {
 export const useLogout = () => {
   const { refreshToken, clearAuth } = useAuthStore()
   const navigate = useNavigate()
-
   return useMutation({
-    mutationFn: () => authApi.logout({ refreshToken: refreshToken! }),
+    mutationFn: () => {
+      return authApi.logout({ refreshToken: refreshToken! })
+    },
     onSettled: () => {
       clearAuth()
       navigate('/home')
@@ -51,7 +52,7 @@ export const useConfirmEmail = () => {
 
   return useMutation({
     mutationFn: ({ userId, token }: { userId: string; token: string }) =>
-      authApi.confirmEmail(userId, token),   // pure — no side effects here
+      authApi.confirmEmail(userId, token),
     onSuccess: (response) => {
       const data = response.data
       if (data.token && data.email && data.userId) {

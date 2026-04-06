@@ -7,7 +7,8 @@ import { useLogout } from '@/hooks/useAuth';
 import { useEffect, useRef, useState } from 'react';
 
 function Navbar() {
-  const { openLogin, isAuthenticated, isAdmin } = useAuthStore()
+  const { openLogin, isAuthenticated, user } = useAuthStore()
+  const adminUser = user?.role === 'Admin'
   const { mutate: logout } = useLogout()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -63,7 +64,7 @@ function Navbar() {
 
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-1 w-44 bg-gray-800 border border-gray-600 rounded-lg shadow-lg overflow-hidden">
-                    {isAdmin() && (
+                    {adminUser && (
                       <Link
                         to="/admin"
                         onClick={() => setDropdownOpen(false)}

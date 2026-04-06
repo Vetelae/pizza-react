@@ -1,7 +1,7 @@
 import type { InternalAxiosRequestConfig } from 'axios'
+import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 import type { AuthResponseDto, RefreshTokenRequestDto, User } from '../types/auth'
-import axios from 'axios'
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -45,7 +45,6 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
-
     if (
       error.response?.status !== 401 ||
       originalRequest._retry ||
@@ -65,40 +64,40 @@ axiosClient.interceptors.response.use(
 
     originalRequest._retry = true
     isRefreshing = true
-
-    const { refreshToken, setAuth, clearAuth } = useAuthStore.getState()
+    const { refreshToken, setAuth, clearAuth, setIsRefreshing } = useAuthStore.getState()
+    setIsRefreshing(true)
 
     if (!refreshToken) {
       isRefreshing = false
+      setIsRefreshing(false)
       clearAuth()
       return Promise.reject(error)
     }
 
     try {
-  const { data } = await axios.post<AuthResponseDto>(
-    `${import.meta.env.VITE_API_URL}/auth/refresh`,
-    { refreshToken } satisfies RefreshTokenRequestDto
-  )
-
-  // Build the user object from the flat response fields
-  const user: User = {
-    id: data.userId,
-    email: data.email,
-    role: data.role as 'Admin' | 'Guest',
-  }
-
-  setAuth(data.token, data.refreshToken, user)
-  processQueue(null, data.token)
-
-  originalRequest.headers.Authorization = `Bearer ${data.token}`
-  return axiosClient(originalRequest)
-} catch (refreshError) {
-  processQueue(refreshError, null)
-  clearAuth()
-  return Promise.reject(refreshError)
-} finally {
-  isRefreshing = false
-}
+      const { data } = await axiosClient.post<AuthResponseDto>(
+        '/auth/refresh',
+        { refreshToken } satisfies RefreshTokenRequestDto,
+        { skipAuth: true }
+      )
+      const currentUser = useAuthStore.getState().user
+      const user: User = {
+        id: data.userId,
+        email: data.email ?? currentUser?.email ?? '',
+        role: (data.role ?? currentUser?.role ?? 'Guest') as 'Admin' | 'Guest',
+      }
+      setAuth(data.token, data.refreshToken, user)
+      processQueue(null, data.token)
+      originalRequest.headers.Authorization = `Bearer ${data.token}`
+      return axiosClient(originalRequest)
+    } catch (refreshError) {
+      processQueue(refreshError, null)
+      clearAuth()
+      return Promise.reject(refreshError)
+    } finally {
+      isRefreshing = false
+      setIsRefreshing(false)
+    }
   }
 )
 

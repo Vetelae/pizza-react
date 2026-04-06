@@ -8,11 +8,12 @@ interface AuthState {
   userId: string | null
   isAuthenticated: boolean
   user: User | null
+  isRefreshing: boolean
   setTokens: (token: string, refreshToken: string, userId: string) => void
   setAuth: (token: string, refreshToken: string, user: User) => void
   clearAuth: () => void
   isAdmin: () => boolean
-
+  setIsRefreshing: (value: boolean) => void
   // UI
   isLoginOpen: boolean
   openLogin: () => void
@@ -27,18 +28,17 @@ export const useAuthStore = create<AuthState>()(
       userId: null,
       isAuthenticated: false,
       user: null,
-
+      isRefreshing: false,
       setTokens: (token, refreshToken, userId) =>
         set({ token, refreshToken, userId, isAuthenticated: true }),
-
-      setAuth: (token, refreshToken, user) =>
-        set({ token, refreshToken, userId: user.id, isAuthenticated: true, user }),
-
-      clearAuth: () =>
-        set({ token: null, refreshToken: null, userId: null, isAuthenticated: false, user: null }),
-
+      setAuth: (token, refreshToken, user) => {
+        set({ token, refreshToken, userId: user.id, isAuthenticated: true, user })
+      },
+      clearAuth: () => {
+        set({ token: null, refreshToken: null, userId: null, isAuthenticated: false, user: null })
+      },
       isAdmin: () => get().user?.role === 'Admin',
-
+      setIsRefreshing: (value) => set({ isRefreshing: value }),
       // UI
       isLoginOpen: false,
       openLogin: () => set({ isLoginOpen: true }),
@@ -53,7 +53,6 @@ export const useAuthStore = create<AuthState>()(
         userId: state.userId,
         isAuthenticated: state.isAuthenticated,
         user: state.user,
-        // Note: emailConfirmStatus intentionally not persisted
       }),
     }
   )
