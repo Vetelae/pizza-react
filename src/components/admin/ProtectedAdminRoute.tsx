@@ -2,11 +2,12 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 
 export function ProtectedAdminRoute() {
-  const { isAuthenticated, isAdmin } = useAuthStore()
-  
-  if (!isAuthenticated || !isAdmin()) {
-    return <Navigate to="/home" replace />
+  const { user, isRefreshing } = useAuthStore()
+  const isAdmin = user?.role === 'Admin'
+
+  if (isAdmin || isRefreshing) {
+    return <Outlet />
   }
-  
-  return <Outlet />
+
+  return <Navigate to="/home" replace />
 }

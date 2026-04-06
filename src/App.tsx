@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Footer from './components/Footer'
@@ -12,6 +11,7 @@ import AdminCategories from '@/pages/admin/AdminCategories'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminMenuItems from './pages/admin/AdminMenuItems'
 import AdminNews from './pages/admin/AdminNews'
+import Navbar from './components/NavBar'
 
 function App() {
   return (
