@@ -5,5 +5,15 @@ export interface News {
     content: string;
 }
 
-export type NewsCreate = Omit<News, 'id'>
-export type NewsUpdate = NewsCreate
+// API DTOs
+export interface NewsCreateDto {
+    date: string
+    title: string
+    content: string
+}
+
+export interface NewsUpdateDto {
+    date: string
+    title: string
+    content: string
+}

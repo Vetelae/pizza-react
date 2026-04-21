@@ -1,14 +1,14 @@
 import axiosClient from '../axiosClient'
-import type { Category, CategoryCreate, CategoryUpdate, CategoryImageUploadResponse } from '../../types/category'
+import type { Category, CategoryImageUploadResponse, CreateCategoryDto, UpdateCategoryDto } from '../../types/category'
 
 export const adminCategoryApi = {
     // CREATE category
-    createCategory: async (dto: CategoryCreate): Promise<Category> => {
+    createCategory: async (dto: CreateCategoryDto): Promise<Category> => {
         const { data } = await axiosClient.post<Category>('admin/categories', dto)
         return data
     },
     // UPDATE category
-    updateCategory: async (id: number, dto: CategoryUpdate): Promise<Category> => {
+    updateCategory: async (id: number, dto: UpdateCategoryDto): Promise<Category> => {
         const { data } = await axiosClient.put<Category>(`admin/categories/${id}`, dto)
         return data
     },

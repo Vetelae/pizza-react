@@ -8,9 +8,15 @@ export interface Category {
     menuItems?: MenuItem[]
 }
 
+// API DTOs
+export interface CreateCategoryDto {
+    name: string
+}
+
+export interface UpdateCategoryDto {
+    name: string
+}
+
 export interface CategoryImageUploadResponse {
     imagePath: string
 }
-
-export type CategoryCreate = Omit<Category, 'id' | 'menuItems'>
-export type CategoryUpdate = CategoryCreate
