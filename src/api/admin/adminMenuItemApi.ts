@@ -1,15 +1,15 @@
 import axiosClient from '../axiosClient'
-import type { MenuItem, MenuItemCreate, MenuItemImageUploadResponse } from '../../types/menuItem'
+import type { CreateMenuItemDto, MenuItem, MenuItemImageUploadResponse } from '../../types/menuItem'
 
 export const adminMenuItemApi = {
   // CREATE menu item
-  createMenuItem: async (dto: MenuItemCreate): Promise<MenuItem> => {
+  createMenuItem: async (dto: CreateMenuItemDto): Promise<MenuItem> => {
     const { data } = await axiosClient.post<MenuItem>('admin/menuitems', dto)
     return data
   },
 
   // UPDATE menu item
-  updateMenuItem: async (id: number, dto: MenuItemCreate): Promise<MenuItem> => {
+  updateMenuItem: async (id: number, dto: CreateMenuItemDto): Promise<MenuItem> => {
     const { data } = await axiosClient.put<MenuItem>(`admin/menuitems/${id}`, dto)
     return data
   },

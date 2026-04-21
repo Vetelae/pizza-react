@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminCategoryApi } from '@/api/admin/adminCategoryApi'
-import type { CategoryUpdate } from '@/types/category'
+import type { UpdateCategoryDto } from '@/types/category'
 
 // useCreateCategory
 export const useCreateCategory = () => {
@@ -19,7 +19,7 @@ export const useUpdateCategory = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: ({ id, dto }: { id: number, dto: CategoryUpdate }) =>
+        mutationFn: ({ id, dto }: { id: number, dto: UpdateCategoryDto }) =>
             adminCategoryApi.updateCategory(id, dto),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['categories'] })

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminNewsApi } from '@/api/admin/adminNewsApi'
-import type { NewsUpdate } from '@/types/news'
+import type { NewsUpdateDto } from '@/types/news'
 
 // useCreateNews
 export const useCreateNews = () => {
@@ -19,7 +19,7 @@ export const useUpdateNews = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: ({ id, dto }: { id: number, dto: NewsUpdate }) =>
+        mutationFn: ({ id, dto }: { id: number, dto: NewsUpdateDto }) =>
             adminNewsApi.updateNews(id, dto),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['news'] })

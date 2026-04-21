@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminMenuItemApi } from '@/api/admin/adminMenuItemApi'
-import type { MenuItemCreate } from '@/types/menuItem'
+import type { CreateMenuItemDto } from '@/types/menuItem'
+
 
 // useCreateMenuItem
 export const useCreateMenuItem = () => {
@@ -17,7 +18,7 @@ export const useCreateMenuItem = () => {
 export const useUpdateMenuItem = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, dto }: { id: number; dto: MenuItemCreate }) =>
+    mutationFn: ({ id, dto }: { id: number; dto: CreateMenuItemDto}) =>
       adminMenuItemApi.updateMenuItem(id, dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['menuItems'] })

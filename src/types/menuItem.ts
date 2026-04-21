@@ -12,8 +12,15 @@ export interface MenuItem {
     imageFileName: string | null;
 }
 
+// API DTOs
+export interface CreateMenuItemDto {
+    name: string
+    description?: string | null
+    price: number
+    isAvailable: boolean
+    categoryId: number
+}
+
 export type MenuItemImageUploadResponse = {
   imagePath: string
 }
-
-export type MenuItemCreate = Omit<MenuItem, 'id' | 'category'>
