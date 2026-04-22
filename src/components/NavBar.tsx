@@ -1,10 +1,11 @@
-// src/components/Navbar.tsx
 import { Link } from 'react-router-dom'
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { FaShoppingBasket } from "react-icons/fa";
 import { useAuthStore } from '../store/authStore';
 import { useLogout } from '@/hooks/useAuth';
 import { useEffect, useRef, useState } from 'react';
+import { useCartStore } from '@/store/cartStore';
+import { useCart } from '@/hooks/useCart';
 
 function Navbar() {
   const { openLogin, isAuthenticated, user } = useAuthStore()
@@ -12,6 +13,9 @@ function Navbar() {
   const { mutate: logout } = useLogout()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const { openCart } = useCartStore()
+  const { data: cart } = useCart()
+  const itemCount = cart?.items?.reduce((sum, i) => sum + i.quantity, 0) ?? 0
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -94,12 +98,21 @@ function Navbar() {
                 <IoPersonCircleSharp className="text-2xl sm:text-3xl md:text-4xl" />
               </button>
             )}
-            <Link
-              to="/cart"
-              className="hover:text-glow text-base sm:text-xl md:text-2xl px-3 py-2 rounded-md transition text-orange"
-            >
-              <FaShoppingBasket className="text-2xl sm:text-3xl md:text-4xl" />
-            </Link>
+            <div className="relative">
+  <button
+    onClick={openCart}
+    aria-label="Cart"
+    className="hover:text-glow text-base sm:text-xl md:text-2xl px-3 py-2 rounded-md transition text-orange"
+  >
+    <FaShoppingBasket className="text-2xl sm:text-3xl md:text-4xl" />
+  </button>
+  {itemCount > 0 && (
+    <span className="absolute -top-1 -right-1 bg-orange text-gray-900 text-xs
+      font-bold w-5 h-5 rounded-full flex items-center justify-center pointer-events-none">
+      {itemCount}
+    </span>
+  )}
+</div>
           </div>
 
         </div>

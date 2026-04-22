@@ -6,6 +6,7 @@ export const useCart = () => {
     return useQuery({
         queryKey: ['cart'],
         queryFn: cartApi.getCart,
+        staleTime: 1000 * 60 * 5,
     })
 }
 
@@ -14,8 +15,8 @@ export const useAddCartItem = () => {
 
     return useMutation({
         mutationFn: (dto: AddCartItemDto) => cartApi.addItem(dto),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] })
+        onSuccess: (updatedCart) => {
+            queryClient.setQueryData(['cart'], updatedCart)
         },
     })
 }
@@ -26,8 +27,8 @@ export const useUpdateCartItem = () => {
     return useMutation({
         mutationFn: ({ cartItemId, dto }: { cartItemId: number; dto: UpdateCartItemDto }) =>
             cartApi.updateItem(cartItemId, dto),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] })
+        onSuccess: (updatedCart) => {
+            queryClient.setQueryData(['cart'], updatedCart)
         },
     })
 }
@@ -37,8 +38,8 @@ export const useRemoveCartItem = () => {
 
     return useMutation({
         mutationFn: (cartItemId: number) => cartApi.removeItem(cartItemId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] })
+        onSuccess: (updatedCart) => {
+            queryClient.setQueryData(['cart'], updatedCart)
         },
     })
 }
@@ -49,7 +50,7 @@ export const useClearCart = () => {
     return useMutation({
         mutationFn: cartApi.clearCart,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['cart'] })
+            queryClient.setQueryData(['cart'], { items: [], totalPrice: 0 })
         },
     })
 }

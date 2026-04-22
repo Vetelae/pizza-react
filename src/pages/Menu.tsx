@@ -1,12 +1,15 @@
 import { useMenuItems } from '../hooks/useMenuItems'
 import { useCategories } from '../hooks/useCategories'
 import { useEffect, useRef, useState } from 'react'
+import type { MenuItem } from '@/types/menuItem'
+import { CartModal } from '@/components/customer/cart/CartModal'
 
 function Menu() {
   const { data: menuItems, isLoading: menuItemsLoading, isError: menuItemsError } = useMenuItems()
   const { data: categories, isLoading: categoriesLoading, isError: categoriesError } = useCategories()
   const [activeCategory, setActiveCategory] = useState<number | null>(null)
   const stickyNavRef = useRef<HTMLDivElement>(null)
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
 
     // Set first category as active once categories load
   useEffect(() => {
@@ -51,6 +54,12 @@ function Menu() {
 
   return (
     <div className="min-h-screen mt-10">
+
+      <CartModal
+        isOpen={selectedItem !== null}
+        menuItem={selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
 
       {/* ── Always-visible sticky category nav ── */}
       <div
@@ -113,7 +122,12 @@ function Menu() {
                 alt={item.name}
                 className="mt-3 border border-orange rounded-lg w-48 mx-auto md:w-full"
               />
-              <button className="mt-5 bg-gray-900 text-orange">Order now!</button>
+              <button 
+              onClick={() => setSelectedItem(item)}
+              className="mt-5 bg-gray-900 text-orange"
+              >
+                Order now!
+              </button>
             </div>
           ))}
 
