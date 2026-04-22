@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Footer from './components/Footer'
 import LoginPanel from './components/auth/LoginPanel'
+import CartPanel from './components/customer/cart/CartPanel'
 import ConfirmEmail from './pages/ConfirmEmail'
 import ResetPassword from './pages/ResetPassword'
 import { ProtectedAdminRoute } from '@/components/admin/ProtectedAdminRoute'
@@ -39,6 +40,7 @@ function App() {
       </Routes>
       </main>
       <LoginPanel />
+      <CartPanel />
 
       <Footer />
     </div>
