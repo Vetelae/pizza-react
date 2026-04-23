@@ -1,5 +1,5 @@
 import type { ApplicationUser } from './applicationUser'
-import type { OrderItem, OrderItemDto } from './orderItem'
+import type { OrderItem, CreateOrderItemDto } from './orderItem'
 import { OrderType, OrderStatus, PaymentMethod } from './enums'
 
 export interface Order {
@@ -19,20 +19,18 @@ export interface Order {
     items: OrderItem[];
 }
 
-export type OrderCreate = Omit<Order, 'id' | 'createdAt' | 'user' | 'items'>
-
-export interface OrderDto {
-    id: number
-    createdAt: string
+export interface CreateOrderDto {
     customerName: string
     customerEmail: string
     customerPhone: string
     deliveryAddress: string | null
     type: OrderType
-    status: OrderStatus
     paymentMethod: PaymentMethod
-    totalAmount: number
     notes: string | null
-    userId: string | null
-    items: OrderItemDto[]
+    items: CreateOrderItemDto[]
+}
+
+export interface UpdateOrderDto {
+    status?: OrderStatus
+    notes?: string | null
 }

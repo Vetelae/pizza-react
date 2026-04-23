@@ -11,7 +11,10 @@ export interface OrderItem {
     order: Order;
 }
 
-export type OrderItemCreate = Omit<OrderItem, 'id' | 'menuItem' | 'order'>
+export interface CreateOrderItemDto {
+    menuItemId: number
+    quantity: number
+}
 
 // DTO (API shape)
 export interface OrderItemDto {
