@@ -1,5 +1,6 @@
 import type { CartItem } from './cartItem';
 import type { ApplicationUser } from './applicationUser';
+import type { OrderType, PaymentMethod } from './enums';
 
 export interface Cart {
     id: number;
@@ -12,10 +13,6 @@ export interface Cart {
 }
 
 export type CartCreate = Omit<Cart, 'id' | 'createdAt' | 'updatedAt' | 'user' | 'cartItems'>
-
-// Enums
-export type OrderType = 'Delivery' | 'Pickup'
-export type PaymentMethod = 'Cash' | 'Card'
 
 // DTOs (API shape)
 export interface CartItemDto {

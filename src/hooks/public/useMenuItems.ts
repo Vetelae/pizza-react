@@ -1,5 +1,5 @@
+import { menuItemsApi } from '@/api/public/menuItemsApi'
 import { useQuery } from '@tanstack/react-query'
-import { menuItemsApi } from '../api/public/menuItemsApi'
 
 export const useMenuItems = () => {
     return useQuery({

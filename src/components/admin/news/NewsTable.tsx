@@ -1,4 +1,3 @@
-// components/admin/news/NewsTable.tsx
 import type { News } from "@/types/news";
 
 interface NewsTableProps {

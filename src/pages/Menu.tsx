@@ -1,8 +1,8 @@
-import { useMenuItems } from '../hooks/useMenuItems'
-import { useCategories } from '../hooks/useCategories'
 import { useEffect, useRef, useState } from 'react'
 import type { MenuItem } from '@/types/menuItem'
 import { CartModal } from '@/components/customer/cart/CartModal'
+import { useMenuItems } from '@/hooks/public/useMenuItems'
+import { useCategories } from '@/hooks/public/useCategories'
 
 function Menu() {
   const { data: menuItems, isLoading: menuItemsLoading, isError: menuItemsError } = useMenuItems()

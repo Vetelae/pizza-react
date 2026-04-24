@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCategories } from "@/hooks/useCategories";
+
 import {
   useCreateCategory,
   useUpdateCategory,
@@ -9,6 +9,7 @@ import {
 import { CategoriesTable } from "@/components/admin/categories/CategoriesTable";
 import type { Category } from "@/types/category";
 import { CategoryFormModal, type CategoryFormValues } from "@/components/admin/categories/CategoriesFormModal";
+import { useCategories } from "@/hooks/public/useCategories";
 
 export default function AdminCategories() {
   const { data: categories, isLoading, isError } = useCategories();
@@ -48,7 +49,7 @@ export default function AdminCategories() {
     if (editingCategory) {
       // Update name first, then upload image if a new one was selected
       updateCategory.mutate(
-        { id: editingCategory.id, dto: { name: data.name, imagePath: editingCategory.imagePath, imageFileName: editingCategory.imageFileName } },
+        { id: editingCategory.id, dto: { name: data.name} },
         {
           onSuccess: (updated) => {
             if (file) {
@@ -65,7 +66,7 @@ export default function AdminCategories() {
     } else {
       // Create first, then upload image if provided
       createCategory.mutate(
-        { name: data.name, imagePath: "", imageFileName: "" },
+        { name: data.name },
         {
           onSuccess: (created) => {
             if (file) {

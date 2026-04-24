@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { cartApi } from '../api/public/cartApi'
 import type { AddCartItemDto, UpdateCartItemDto, CheckoutDto } from '@/types/cart'
+import { cartApi } from '@/api/public/cartApi'
 
 export const useCart = () => {
     return useQuery({

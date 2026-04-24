@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { authApi } from '../api/public/authApi'
-import { useAuthStore } from '../store/authStore'
-import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from '../types/auth'
+import { authApi } from '@/api/public/authApi'
+import { useAuthStore } from '@/store/authStore'
+import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from '@/types/auth'
 
 // useLogin
 export const useLogin = () => {

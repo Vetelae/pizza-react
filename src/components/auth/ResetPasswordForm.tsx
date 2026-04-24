@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { useResetPassword } from '@/hooks/useAuth'
 import type { ResetPasswordDto } from '@/types/auth'
+import { useResetPassword } from '@/hooks/public/useAuth'
 
 export default function ResetPasswordForm() {
   const [searchParams] = useSearchParams()

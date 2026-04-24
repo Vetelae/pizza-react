@@ -19,6 +19,16 @@ export interface CreateMenuItemDto {
     price: number
     isAvailable: boolean
     categoryId: number
+    imagePath?: string | null
+    imageFileName?: string | null
+}
+
+export interface UpdateMenuItemDto {
+    name: string
+    description?: string | null
+    price: number
+    isAvailable: boolean
+    categoryId: number
 }
 
 export type MenuItemImageUploadResponse = {

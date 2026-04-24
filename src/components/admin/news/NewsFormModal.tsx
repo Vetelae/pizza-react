@@ -1,4 +1,3 @@
-// components/admin/news/NewsFormModal.tsx
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { News } from "@/types/news";

@@ -1,5 +1,5 @@
+import { newsApi } from '@/api/public/newsApi'
 import { useQuery } from '@tanstack/react-query'
-import { newsApi } from '../api/public/newsApi'
 
 export const useNews = () => {
     return useQuery({

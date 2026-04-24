@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { useRegister } from '@/hooks/useAuth'
 import type { RegisterDto } from '@/types/auth'
+import { useRegister } from '@/hooks/public/useAuth'
 
 interface RegisterFormProps {
   onLoginClick: () => void

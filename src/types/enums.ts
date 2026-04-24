@@ -1,7 +1,6 @@
-// enums.ts
 export const OrderType = {
-    Delivery: 0,
-    Pickup: 1,
+    Pickup: 0,
+    Delivery: 1,
 } as const
 export type OrderType = typeof OrderType[keyof typeof OrderType]
 

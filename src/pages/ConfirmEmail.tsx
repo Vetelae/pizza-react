@@ -1,6 +1,6 @@
+import { useConfirmEmail } from '@/hooks/public/useAuth'
 import { useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useConfirmEmail } from '@/hooks/useAuth'
 
 export default function ConfirmEmail() {
   const [searchParams] = useSearchParams()
