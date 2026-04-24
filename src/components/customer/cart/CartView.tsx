@@ -1,4 +1,4 @@
-import { useCart, useUpdateCartItem, useRemoveCartItem } from '@/hooks/useCart'
+import { useCart, useRemoveCartItem, useUpdateCartItem } from "@/hooks/public/useCart"
 
 interface CartViewProps {
   onCheckout: () => void

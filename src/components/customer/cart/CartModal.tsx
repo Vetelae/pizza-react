@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useAddCartItem } from "@/hooks/useCart";
 import type { MenuItem } from "@/types/menuItem";
+import { useAddCartItem } from "@/hooks/public/useCart";
 
 interface CartModalProps {
   isOpen: boolean;

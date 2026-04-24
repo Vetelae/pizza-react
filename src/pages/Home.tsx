@@ -1,6 +1,6 @@
-import { useNews } from '../hooks/useNews'
 import pizzaJpeg from '../assets/images/pizza.jpeg'
 import ig from '../assets/images/ig.png'
+import { useNews } from '@/hooks/public/useNews'
 
 function Home() {
   const { data: news, isLoading, isError } = useNews()

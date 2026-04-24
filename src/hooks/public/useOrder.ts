@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { orderApi } from '../api/public/orderApi'
 import type { CreateOrderDto } from '@/types/order'
+import { orderApi } from '@/api/public/orderApi'
 
 // Track a single order by id (public — guests and logged-in users)
 export const useOrder = (id: number) => {

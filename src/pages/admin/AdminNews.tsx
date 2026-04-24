@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNews } from "@/hooks/useNews";
 import { useCreateNews, useDeleteNews, useUpdateNews } from "@/hooks/admin/useAdminNews";
+import { useNews } from "@/hooks/public/useNews";
 import { NewsTable } from "@/components/admin/news/NewsTable";
 import { NewsFormModal } from "@/components/admin/news/NewsFormModal";
 import type { NewsFormValues } from "@/components/admin/news/NewsFormModal";

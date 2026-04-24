@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { useMenuItems } from "@/hooks/useMenuItems";
-import { useCategories } from "@/hooks/useCategories";
+import type { MenuItem } from "@/types/menuItem";
+import { useMenuItems } from "@/hooks/public/useMenuItems";
+import { useCategories } from "@/hooks/public/useCategories";
+
 import {
   useCreateMenuItem,
   useUpdateMenuItem,
@@ -12,7 +14,6 @@ import {
   MenuItemFormModal,
   type MenuItemFormValues,
 } from "@/components/admin/menuItems/MenuItemFormModal";
-import type { MenuItem } from "@/types/menuItem";
 
 export default function AdminMenuItems() {
   const { data: menuItems, isLoading, isError } = useMenuItems();
@@ -56,8 +57,6 @@ export default function AdminMenuItems() {
       price: data.price,
       isAvailable: data.isAvailable,
       categoryId: data.categoryId,
-      imagePath: editingMenuItem?.imagePath ?? null,
-      imageFileName: editingMenuItem?.imageFileName ?? null,
     };
 
     if (editingMenuItem) {

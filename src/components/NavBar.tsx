@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom'
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { FaShoppingBasket } from "react-icons/fa";
 import { useAuthStore } from '../store/authStore';
-import { useLogout } from '@/hooks/useAuth';
 import { useEffect, useRef, useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
-import { useCart } from '@/hooks/useCart';
+import { useLogout } from '@/hooks/public/useAuth';
+import { useCart } from '@/hooks/public/useCart';
+
 
 function Navbar() {
   const { openLogin, isAuthenticated, user } = useAuthStore()

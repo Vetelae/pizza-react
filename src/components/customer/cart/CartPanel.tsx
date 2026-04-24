@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useCart } from '@/hooks/useCart'
 import { useCartStore } from '@/store/cartStore'
 import CartView from './CartView'
 import CheckoutView from './CheckoutView'
+import { useCart } from '@/hooks/public/useCart'
 
 type View = 'cart' | 'checkout'
 

@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
-import { useCart, useCheckout } from '@/hooks/useCart'
 import type { CheckoutDto } from '@/types/cart'
+import { useCart, useCheckout } from '@/hooks/public/useCart'
+import { OrderType } from '@/types/enums'
 
 interface CheckoutViewProps {
   onBack: () => void
@@ -17,7 +18,7 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
     watch,
     formState: { errors },
   } = useForm<CheckoutDto>({
-    defaultValues: { type: 'Pickup' },
+    defaultValues: { type: OrderType.Pickup },
   })
 
   const onSubmit = async (data: CheckoutDto) => {
@@ -118,7 +119,7 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
         </div>
 
         {/* Only shown when Delivery is selected */}
-        {watch('type') === 'Delivery' && (
+        {watch('type') === OrderType.Delivery && (
           <div>
             <label className="block text-xs font-medium text-zinc-300 mb-1">
               Delivery address

@@ -1,6 +1,6 @@
 import axiosClient from '@/api/axiosClient'
-import type { OrderDto } from '@/types/order'
 import type { AddCartItemDto, CartDto, CheckoutDto, UpdateCartItemDto } from '@/types/cart'
+import type { Order } from '@/types/order'
 
 const getSessionId = (): string => {
   let sessionId = localStorage.getItem('sessionId')
@@ -40,8 +40,8 @@ export const cartApi = {
     await axiosClient.delete('cart', { headers: cartHeaders() })
   },
 
-  checkout: async (dto: CheckoutDto): Promise<OrderDto> => {
-    const { data } = await axiosClient.post<OrderDto>('cart/checkout', dto, { headers: cartHeaders() })
+  checkout: async (dto: CheckoutDto): Promise<Order> => {
+    const { data } = await axiosClient.post<Order>('cart/checkout', dto, { headers: cartHeaders() })
     return data
   },
 }

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
-import { useForgotPassword } from '@/hooks/useAuth'
 import type { ForgotPasswordDto } from '@/types/auth'
+import { useForgotPassword } from '@/hooks/public/useAuth'
 
 interface ForgotPasswordFormProps {
   onLoginClick: () => void
