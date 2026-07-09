@@ -5,15 +5,16 @@ import { OrderType, OrderStatus, PaymentMethod } from './enums'
 export interface Order {
     id: number;
     createdAt: string;
+    lookupToken?: string | null;
     userId: string | null;
     user: ApplicationUser | null;
     customerName: string;
     customerEmail: string;
     customerPhone: string;
     deliveryAddress: string;
-    type: OrderType;
-    status: OrderStatus;
-    paymentMethod: PaymentMethod;
+    type: OrderType | keyof typeof OrderType;
+    status: OrderStatus | keyof typeof OrderStatus;
+    paymentMethod: PaymentMethod | keyof typeof PaymentMethod;
     totalAmount: number;
     notes: string | null;
     items: OrderItem[];

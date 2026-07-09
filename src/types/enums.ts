@@ -8,8 +8,8 @@ export const OrderStatus = {
     Pending: 0,
     Confirmed: 1,
     Preparing: 2,
-    OutForDelivery: 3,
-    Delivered: 4,
+    Ready: 3,
+    Completed: 4,
     Cancelled: 5,
 } as const
 export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus]

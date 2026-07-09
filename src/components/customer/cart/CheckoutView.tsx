@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import type { CheckoutDto } from '@/types/cart'
 import { useCart, useCheckout } from '@/hooks/public/useCart'
 import { OrderType } from '@/types/enums'
@@ -11,6 +12,7 @@ interface CheckoutViewProps {
 export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
   const { data: cart } = useCart()
   const checkout = useCheckout()
+  const navigate = useNavigate()
 
   const {
     register,
@@ -22,8 +24,12 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
   })
 
   const onSubmit = async (data: CheckoutDto) => {
-    await checkout.mutateAsync(data)
+    const order = await checkout.mutateAsync(data)
     onClose()
+    const search = order.lookupToken
+      ? `?token=${encodeURIComponent(order.lookupToken)}`
+      : ''
+    navigate(`/orders/${order.id}${search}`)
   }
 
   const items = cart?.items ?? []
