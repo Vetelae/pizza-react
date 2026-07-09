@@ -28,12 +28,84 @@ const axiosClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+const decodeJwtPayload = (token: string): { exp?: number } | null => {
+  try {
+    const [, payload] = token.split('.')
+    if (!payload) return null
+
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
+    return JSON.parse(atob(padded)) as { exp?: number }
+  } catch {
+    return null
+  }
+}
+
+const shouldRefreshToken = (token: string) => {
+  const payload = decodeJwtPayload(token)
+  if (!payload?.exp) return false
+
+  const nowInSeconds = Date.now() / 1000
+  const refreshBufferInSeconds = 30
+  return payload.exp <= nowInSeconds + refreshBufferInSeconds
+}
+
+const refreshAuthToken = async () => {
+  if (isRefreshing) {
+    return new Promise<string>((resolve, reject) => {
+      failedQueue.push({ resolve, reject })
+    })
+  }
+
+  isRefreshing = true
+  const { refreshToken, setAuth, clearAuth, setIsRefreshing } = useAuthStore.getState()
+  setIsRefreshing(true)
+
+  if (!refreshToken) {
+    isRefreshing = false
+    setIsRefreshing(false)
+    clearAuth()
+    throw new Error('Missing refresh token')
+  }
+
+  try {
+    const { data } = await axiosClient.post<AuthResponseDto>(
+      '/auth/refresh',
+      { refreshToken } satisfies RefreshTokenRequestDto,
+      { skipAuth: true }
+    )
+    const currentUser = useAuthStore.getState().user
+    const user: User = {
+      id: data.userId,
+      email: data.email ?? currentUser?.email ?? '',
+      role: (data.role ?? currentUser?.role ?? 'Guest') as 'Admin' | 'Guest',
+    }
+
+    setAuth(data.token, data.refreshToken, user)
+    processQueue(null, data.token)
+    return data.token
+  } catch (refreshError) {
+    processQueue(refreshError, null)
+    clearAuth()
+    throw refreshError
+  } finally {
+    isRefreshing = false
+    setIsRefreshing(false)
+  }
+}
+
 axiosClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  async (config: InternalAxiosRequestConfig) => {
     if (!config.skipAuth) {
-      const token = useAuthStore.getState().token
+      const { token, refreshToken } = useAuthStore.getState()
+
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+        const authToken =
+          refreshToken && shouldRefreshToken(token)
+            ? await refreshAuthToken()
+            : token
+
+        config.headers.Authorization = `Bearer ${authToken}`
       }
     }
     return config
@@ -63,40 +135,12 @@ axiosClient.interceptors.response.use(
     }
 
     originalRequest._retry = true
-    isRefreshing = true
-    const { refreshToken, setAuth, clearAuth, setIsRefreshing } = useAuthStore.getState()
-    setIsRefreshing(true)
-
-    if (!refreshToken) {
-      isRefreshing = false
-      setIsRefreshing(false)
-      clearAuth()
-      return Promise.reject(error)
-    }
-
     try {
-      const { data } = await axiosClient.post<AuthResponseDto>(
-        '/auth/refresh',
-        { refreshToken } satisfies RefreshTokenRequestDto,
-        { skipAuth: true }
-      )
-      const currentUser = useAuthStore.getState().user
-      const user: User = {
-        id: data.userId,
-        email: data.email ?? currentUser?.email ?? '',
-        role: (data.role ?? currentUser?.role ?? 'Guest') as 'Admin' | 'Guest',
-      }
-      setAuth(data.token, data.refreshToken, user)
-      processQueue(null, data.token)
-      originalRequest.headers.Authorization = `Bearer ${data.token}`
+      const token = await refreshAuthToken()
+      originalRequest.headers.Authorization = `Bearer ${token}`
       return axiosClient(originalRequest)
     } catch (refreshError) {
-      processQueue(refreshError, null)
-      clearAuth()
       return Promise.reject(refreshError)
-    } finally {
-      isRefreshing = false
-      setIsRefreshing(false)
     }
   }
 )

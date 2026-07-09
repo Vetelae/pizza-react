@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import type { CheckoutDto } from '@/types/cart'
 import { useCart, useCheckout } from '@/hooks/public/useCart'
-import { OrderType } from '@/types/enums'
+import { OrderType, PaymentMethod } from '@/types/enums'
 
 interface CheckoutViewProps {
   onBack: () => void
@@ -33,6 +33,7 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
   }
 
   const items = cart?.items ?? []
+  const orderType = watch('type')
 
   const inputClass = (hasError: boolean) =>
     `w-full px-3 py-2 rounded-md text-sm bg-zinc-800 border text-zinc-100
@@ -115,24 +116,30 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
         <div>
           <label className="block text-xs font-medium text-zinc-300 mb-1">Order type</label>
           <select
-            {...register('type', { required: 'Order type is required' })}
+            {...register('type', {
+              required: 'Order type is required',
+              setValueAs: (value) => Number(value),
+            })}
             className={inputClass(!!errors.type)}
           >
-            <option value="Pickup">Pickup</option>
-            <option value="Delivery">Delivery</option>
+            <option value={OrderType.Pickup}>Pickup</option>
+            <option value={OrderType.Delivery}>Delivery</option>
           </select>
           {errors.type && <p className={errorClass}>{errors.type.message}</p>}
         </div>
 
         {/* Only shown when Delivery is selected */}
-        {watch('type') === OrderType.Delivery && (
+        {orderType === OrderType.Delivery && (
           <div>
             <label className="block text-xs font-medium text-zinc-300 mb-1">
               Delivery address
             </label>
             <input
               {...register('deliveryAddress', {
-                required: 'Address is required for delivery',
+                validate: (value) =>
+                  orderType !== OrderType.Delivery ||
+                  !!value?.trim() ||
+                  'Address is required for delivery',
               })}
               placeholder="Street, city, postcode"
               className={inputClass(!!errors.deliveryAddress)}
@@ -148,11 +155,14 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
             Payment method
           </label>
           <select
-            {...register('paymentMethod', { required: 'Payment method is required' })}
+            {...register('paymentMethod', {
+              required: 'Payment method is required',
+              setValueAs: (value) => Number(value),
+            })}
             className={inputClass(!!errors.paymentMethod)}
           >
-            <option value="Cash">Cash</option>
-            <option value="Card">Card</option>
+            <option value={PaymentMethod.Cash}>Cash</option>
+            <option value={PaymentMethod.Card}>Card</option>
           </select>
           {errors.paymentMethod && <p className={errorClass}>{errors.paymentMethod.message}</p>}
         </div>
