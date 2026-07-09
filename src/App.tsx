@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import LoginPanel from './components/auth/LoginPanel'
 import CartPanel from './components/customer/cart/CartPanel'
 import ConfirmEmail from './pages/ConfirmEmail'
+import OrderDetails from './pages/OrderDetails'
 import ResetPassword from './pages/ResetPassword'
 import { ProtectedAdminRoute } from '@/components/admin/ProtectedAdminRoute'
 import AdminLayout from '@/pages/admin/AdminLayout'
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
+        <Route path="/orders/:orderId" element={<OrderDetails />} />
         <Route path="/confirm-email" element={<ConfirmEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 

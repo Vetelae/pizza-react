@@ -2,13 +2,15 @@ import type { MenuItem } from './menuItem'
 import type { Order } from './order'
 
 export interface OrderItem {
-    id: number;
+    id?: number;
     quantity: number;
-    unitPrice: number;
+    unitPrice?: number;
     menuItemId: number;
-    menuItem: MenuItem;
-    orderId: number;
-    order: Order;
+    menuItem?: MenuItem | null;
+    menuItemName?: string;
+    menuItemValue?: number;
+    orderId?: number;
+    order?: Order;
 }
 
 export interface CreateOrderItemDto {
