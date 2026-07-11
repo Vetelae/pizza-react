@@ -1,8 +1,11 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import type { CheckoutDto } from '@/types/cart'
 import { useCart, useCheckout } from '@/hooks/public/useCart'
 import { OrderType, PaymentMethod } from '@/types/enums'
+import { useProfile } from '@/hooks/public/useAuth'
+import { useAuthStore } from '@/store/authStore'
 
 interface CheckoutViewProps {
   onBack: () => void
@@ -11,6 +14,8 @@ interface CheckoutViewProps {
 
 export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
   const { data: cart } = useCart()
+  const { data: profile } = useProfile()
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
   const checkout = useCheckout()
   const navigate = useNavigate()
 
@@ -18,10 +23,34 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
     register,
     handleSubmit,
     watch,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutDto>({
     defaultValues: { type: OrderType.Pickup },
   })
+
+  useEffect(() => {
+    if (!isAuthenticated || !profile) return
+
+    const fullName = `${profile.firstName} ${profile.lastName}`.trim()
+
+    if (!getValues('customerName') && fullName) {
+      setValue('customerName', fullName)
+    }
+
+    if (!getValues('customerEmail') && profile.email) {
+      setValue('customerEmail', profile.email)
+    }
+
+    if (!getValues('customerPhone') && profile.phoneNumber) {
+      setValue('customerPhone', profile.phoneNumber)
+    }
+
+    if (!getValues('deliveryAddress') && profile.address) {
+      setValue('deliveryAddress', profile.address)
+    }
+  }, [getValues, isAuthenticated, profile, setValue])
 
   const onSubmit = async (data: CheckoutDto) => {
     const order = await checkout.mutateAsync(data)
@@ -86,8 +115,9 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
           <label className="block text-xs font-medium text-zinc-300 mb-1">Full name</label>
           <input
             {...register('customerName', { required: 'Name is required' })}
+            readOnly={isAuthenticated}
             placeholder="Jane Doe"
-            className={inputClass(!!errors.customerName)}
+            className={`${inputClass(!!errors.customerName)} ${isAuthenticated ? 'cursor-not-allowed opacity-75' : ''}`}
           />
           {errors.customerName && <p className={errorClass}>{errors.customerName.message}</p>}
         </div>
@@ -97,8 +127,9 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
           <input
             {...register('customerEmail', { required: 'Email is required' })}
             type="email"
+            readOnly={isAuthenticated}
             placeholder="jane@example.com"
-            className={inputClass(!!errors.customerEmail)}
+            className={`${inputClass(!!errors.customerEmail)} ${isAuthenticated ? 'cursor-not-allowed opacity-75' : ''}`}
           />
           {errors.customerEmail && <p className={errorClass}>{errors.customerEmail.message}</p>}
         </div>
@@ -107,6 +138,7 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
           <label className="block text-xs font-medium text-zinc-300 mb-1">Phone</label>
           <input
             {...register('customerPhone', { required: 'Phone is required' })}
+            type="tel"
             placeholder="+358 40 123 4567"
             className={inputClass(!!errors.customerPhone)}
           />

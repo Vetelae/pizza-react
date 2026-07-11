@@ -11,6 +11,7 @@ import { useCart } from '@/hooks/public/useCart';
 function Navbar() {
   const { openLogin, isAuthenticated, user } = useAuthStore()
   const adminUser = user?.role === 'Admin'
+  const guestUser = user?.role === 'Guest'
   const { mutate: logout } = useLogout()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -76,6 +77,15 @@ function Navbar() {
                         className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-orange hover:bg-gray-700 transition-colors"
                       >
                         Admin Panel
+                      </Link>
+                    )}
+                    {guestUser && (
+                      <Link
+                        to="/profile"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-orange hover:bg-gray-700 transition-colors"
+                      >
+                        Profile
                       </Link>
                     )}
                     <button

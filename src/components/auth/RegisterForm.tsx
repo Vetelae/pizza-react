@@ -96,6 +96,54 @@ export default function RegisterForm({ onLoginClick, onVerifyClick }: RegisterFo
 
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            Phone number
+          </label>
+          <input
+            type="tel"
+            autoComplete="tel"
+            placeholder="Phone number (optional)"
+            {...register('phoneNumber', {
+              minLength: { value: 7, message: 'Minimum 7 characters' },
+              maxLength: { value: 15, message: 'Maximum 15 characters' },
+              setValueAs: (value) => value.trim() === '' ? null : value.trim(),
+            })}
+            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
+              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
+              placeholder:text-zinc-400
+              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
+              transition-shadow"
+          />
+          {errors.phoneNumber && (
+            <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            Address
+          </label>
+          <input
+            type="text"
+            autoComplete="street-address"
+            placeholder="Address (optional)"
+            {...register('address', {
+              minLength: { value: 5, message: 'Minimum 5 characters' },
+              maxLength: { value: 100, message: 'Maximum 100 characters' },
+              setValueAs: (value) => value.trim() === '' ? null : value.trim(),
+            })}
+            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
+              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
+              placeholder:text-zinc-400
+              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
+              transition-shadow"
+          />
+          {errors.address && (
+            <p className="text-xs text-red-500">{errors.address.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
             Password
           </label>
           <input

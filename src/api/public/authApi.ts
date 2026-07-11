@@ -1,7 +1,7 @@
 import axiosClient from '../axiosClient'
 import type { 
   RegisterDto, LoginDto, ForgotPasswordDto, 
-  ResetPasswordDto, RefreshTokenRequestDto, AuthResponseDto 
+  ResetPasswordDto, RefreshTokenRequestDto, AuthResponseDto, UserProfileDto 
 } from '../../types/auth'
 
 export const authApi = {
@@ -19,6 +19,12 @@ export const authApi = {
   // LOGIN
   login: (data: LoginDto) =>
     axiosClient.post<AuthResponseDto>('/auth/login', data, { skipAuth: true }),
+
+  // ME
+  me: async (): Promise<UserProfileDto> => {
+    const { data } = await axiosClient.get<UserProfileDto>('/auth/me')
+    return data
+  },
 
   // FORGOT PASSWORD
   forgotPassword: (data: ForgotPasswordDto) =>
