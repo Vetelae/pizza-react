@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '@/api/public/authApi'
 import { useAuthStore } from '@/store/authStore'
@@ -42,6 +42,19 @@ export const useLogout = () => {
 export const useRegister = () => {
   return useMutation({
     mutationFn: (data: RegisterDto) => authApi.register(data),
+  })
+}
+
+// useProfile
+export const useProfile = () => {
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const userId = useAuthStore(state => state.userId)
+
+  return useQuery({
+    queryKey: ['profile', userId],
+    queryFn: authApi.me,
+    enabled: isAuthenticated && !!userId,
+    staleTime: 1000 * 60 * 5,
   })
 }
 

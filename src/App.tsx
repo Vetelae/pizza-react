@@ -14,6 +14,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminMenuItems from './pages/admin/AdminMenuItems'
 import AdminNews from './pages/admin/AdminNews'
 import Navbar from './components/NavBar'
+import Profile from './pages/Profile'
+import { ProtectedGuestRoute } from '@/components/user/ProtectedGuestRoute'
 
 function App() {
   return (
@@ -27,6 +29,10 @@ function App() {
         <Route path="/orders/:orderId" element={<OrderDetails />} />
         <Route path="/confirm-email" element={<ConfirmEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        <Route element={<ProtectedGuestRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
 
         {/* Admin routes */}
           <Route element={<ProtectedAdminRoute />}>

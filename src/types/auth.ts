@@ -6,11 +6,22 @@ export interface User {
   role: 'Admin' | 'Guest'
 }
 
+export interface UserProfileDto {
+  id: string
+  firstName: string
+  lastName: string
+  email: string | null
+  phoneNumber: string | null
+  address: string | null
+}
+
 export interface RegisterDto {
   email: string
   password: string
   firstName: string
   lastName: string
+  address?: string | null
+  phoneNumber?: string | null
 }
 
 export interface LoginDto {

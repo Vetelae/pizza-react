@@ -12,6 +12,7 @@ export interface ApplicationUser {
     // Custom fields
     firstName: string;
     lastName: string;
+    address: string | null;
 
     // Navigation
     cart: Cart | null;
