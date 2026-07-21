@@ -1,7 +1,8 @@
 import axiosClient from '../axiosClient'
 import type { 
   RegisterDto, LoginDto, ForgotPasswordDto, 
-  ResetPasswordDto, RefreshTokenRequestDto, AuthResponseDto, UserProfileDto 
+  ResetPasswordDto, RefreshTokenRequestDto, AuthResponseDto, UserProfileDto,
+  UpdateProfileDto
 } from '../../types/auth'
 
 export const authApi = {
@@ -24,6 +25,12 @@ export const authApi = {
   me: async (): Promise<UserProfileDto> => {
     const { data } = await axiosClient.get<UserProfileDto>('/auth/me')
     return data
+  },
+
+  // UPDATE ME
+  updateMe: async (data: UpdateProfileDto): Promise<UserProfileDto> => {
+    const response = await axiosClient.put<UserProfileDto>('/auth/me', data)
+    return response.data
   },
 
   // FORGOT PASSWORD

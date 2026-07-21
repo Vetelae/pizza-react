@@ -1,8 +1,8 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '@/api/public/authApi'
 import { useAuthStore } from '@/store/authStore'
-import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto } from '@/types/auth'
+import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto, UpdateProfileDto } from '@/types/auth'
 
 // useLogin
 export const useLogin = () => {
@@ -55,6 +55,19 @@ export const useProfile = () => {
     queryFn: authApi.me,
     enabled: isAuthenticated && !!userId,
     staleTime: 1000 * 60 * 5,
+  })
+}
+
+// useUpdateProfile
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient()
+  const userId = useAuthStore(state => state.userId)
+
+  return useMutation({
+    mutationFn: (data: UpdateProfileDto) => authApi.updateMe(data),
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(['profile', userId], updatedProfile)
+    },
   })
 }
 

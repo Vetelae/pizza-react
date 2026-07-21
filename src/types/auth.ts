@@ -24,6 +24,13 @@ export interface RegisterDto {
   phoneNumber?: string | null
 }
 
+export interface UpdateProfileDto {
+  firstName: string
+  lastName: string
+  phoneNumber?: string | null
+  address?: string | null
+}
+
 export interface LoginDto {
   email: string
   password: string
