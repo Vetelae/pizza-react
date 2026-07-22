@@ -1,5 +1,7 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useOrder } from '@/hooks/public/useOrder'
+import { useUserOrder } from '@/hooks/user/useUserOrder'
+import { useAuthStore } from '@/store/authStore'
 import { OrderStatus, OrderType, PaymentMethod } from '@/types/enums'
 
 type EnumMap = Record<string, number>
@@ -70,8 +72,22 @@ function OrderDetails() {
   const parsedOrderId = Number(orderId)
   const isValidOrderId = Number.isInteger(parsedOrderId) && parsedOrderId > 0
   const lookupToken = searchParams.get('token')
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const userId = useAuthStore(state => state.userId)
+  const shouldUseUserOrder = isAuthenticated && !!userId && !lookupToken
 
-  const { data: order, isLoading, isError } = useOrder(parsedOrderId, lookupToken)
+  const publicOrderQuery = useOrder(
+    parsedOrderId,
+    lookupToken,
+    isValidOrderId && !shouldUseUserOrder
+  )
+  const userOrderQuery = useUserOrder(
+    parsedOrderId,
+    isValidOrderId && shouldUseUserOrder
+  )
+  const { data: order, isLoading, isError } = shouldUseUserOrder
+    ? userOrderQuery
+    : publicOrderQuery
 
   if (!isValidOrderId) {
     return (

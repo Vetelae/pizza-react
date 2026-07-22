@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import ProfileOrderHistory from '@/components/customer/orders/ProfileOrderHistory'
 import { useProfile, useUpdateProfile } from '@/hooks/public/useAuth'
 import type { UpdateProfileDto } from '@/types/auth'
 
@@ -168,6 +169,8 @@ export default function Profile() {
             </div>
           </form>
         )}
+
+        {profile && <ProfileOrderHistory />}
       </div>
     </section>
   )
