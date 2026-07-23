@@ -1,5 +1,4 @@
 import {
-  OrderStatus,
   OrderType,
   PaymentMethod,
 } from '@/types/enums'
@@ -8,6 +7,8 @@ import type {
   OrderTypeName,
   PaymentMethodName,
 } from '@/types/enums'
+
+export { normalizeOrderStatus } from '@/utils/orderStatus'
 
 type EnumMap = Record<string, number>
 
@@ -98,11 +99,6 @@ const normalizeEnumName = <T extends EnumMap>(
   const entry = Object.entries(enumMap).find(([, enumValue]) => enumValue === value)
   return entry ? entry[0] : null
 }
-
-export const normalizeOrderStatus = (
-  value: number | string
-): OrderStatusName | null =>
-  normalizeEnumName(value, OrderStatus) as OrderStatusName | null
 
 export const normalizeOrderType = (
   value: number | string

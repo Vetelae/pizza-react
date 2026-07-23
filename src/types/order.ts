@@ -46,6 +46,13 @@ export interface OrderStatusChangedEvent {
     order: OrderCard;
 }
 
+export interface CustomerOrderStatusChanged {
+    orderId: number;
+    oldStatus: OrderStatusName;
+    newStatus: OrderStatusName;
+    changedAt: string;
+}
+
 export interface CreateOrderDto {
     customerName: string
     customerEmail: string

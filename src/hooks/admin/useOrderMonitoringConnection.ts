@@ -5,36 +5,19 @@ import {
   HubConnectionState,
   LogLevel,
 } from '@microsoft/signalr'
+import { getHubUrl } from '@/api/hubUrl'
 import { getValidAccessToken } from '@/api/axiosClient'
 import type { OrderCard, OrderStatusChangedEvent } from '@/types/order'
+import type { OrderConnectionStatus } from '@/types/realtime'
 import { adminOrderKeys } from './useAdminOrder'
 import {
   ACTIVE_ORDER_STATUSES,
   normalizeOrderStatus,
 } from '@/components/admin/orders/orderMonitoringUtils'
 
-export type OrderConnectionStatus =
-  | 'connecting'
-  | 'connected'
-  | 'reconnecting'
-  | 'offline'
-
 type MonitoringEvent =
   | { type: 'created' | 'updated'; order: OrderCard }
   | { type: 'statusChanged'; change: OrderStatusChangedEvent }
-
-const getOrderHubUrl = () => {
-  const configuredApiUrl = import.meta.env.VITE_API_URL as string | undefined
-  if (!configuredApiUrl) return '/hubs/admin/orders'
-
-  const url = new URL(configuredApiUrl, window.location.origin)
-  const apiPath = url.pathname.replace(/\/+$/, '')
-  const basePath = apiPath.endsWith('/api') ? apiPath.slice(0, -4) : apiPath
-  url.pathname = `${basePath}/hubs/admin/orders`.replace(/\/{2,}/g, '/')
-  url.search = ''
-  url.hash = ''
-  return url.toString()
-}
 
 const isActiveOrder = (order: OrderCard) => {
   const status = normalizeOrderStatus(order.status)
@@ -46,6 +29,14 @@ export const useOrderMonitoringConnection = (snapshotReady: boolean) => {
   const [status, setStatus] = useState<OrderConnectionStatus>('connecting')
   const snapshotReadyRef = useRef(snapshotReady)
   const pendingEventsRef = useRef<MonitoringEvent[]>([])
+  const refreshActiveOrders = useCallback(
+    () =>
+      queryClient.invalidateQueries({
+        queryKey: adminOrderKeys.active,
+        exact: true,
+      }),
+    [queryClient]
+  )
 
   const upsertOrder = useCallback(
     (order: OrderCard) => {
@@ -99,7 +90,7 @@ export const useOrderMonitoringConnection = (snapshotReady: boolean) => {
     let retryTimeout: number | undefined
 
     const connection = new HubConnectionBuilder()
-      .withUrl(getOrderHubUrl(), {
+      .withUrl(getHubUrl('hubs/admin/orders'), {
         accessTokenFactory: async () => (await getValidAccessToken()) ?? '',
       })
       .withAutomaticReconnect([0, 2_000, 5_000, 10_000, 30_000])
@@ -135,7 +126,10 @@ export const useOrderMonitoringConnection = (snapshotReady: boolean) => {
       setStatus('connecting')
       try {
         await connection.start()
-        if (!disposed) setStatus('connected')
+        if (!disposed) {
+          setStatus('connected')
+          void refreshActiveOrders()
+        }
       } catch {
         if (!disposed) {
           setStatus('offline')
@@ -150,7 +144,7 @@ export const useOrderMonitoringConnection = (snapshotReady: boolean) => {
     connection.onreconnected(() => {
       if (disposed) return
       setStatus('connected')
-      void queryClient.invalidateQueries({ queryKey: adminOrderKeys.active })
+      void refreshActiveOrders()
     })
     connection.onclose(() => {
       if (disposed) return
@@ -168,7 +162,35 @@ export const useOrderMonitoringConnection = (snapshotReady: boolean) => {
       connection.off('OrderUpdated')
       void connection.stop()
     }
-  }, [applyEvent, queryClient])
+  }, [applyEvent, refreshActiveOrders])
+
+  useEffect(() => {
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') {
+        void refreshActiveOrders()
+      }
+    }
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        void refreshActiveOrders()
+      }
+    }
+    const interval = window.setInterval(
+      refreshIfVisible,
+      status === 'connected' ? 60_000 : 15_000
+    )
+
+    window.addEventListener('focus', refreshIfVisible)
+    window.addEventListener('online', refreshIfVisible)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', refreshIfVisible)
+      window.removeEventListener('online', refreshIfVisible)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [refreshActiveOrders, status])
 
   return status
 }

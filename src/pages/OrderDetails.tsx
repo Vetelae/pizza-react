@@ -1,8 +1,11 @@
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useOrder } from '@/hooks/public/useOrder'
 import { useUserOrder } from '@/hooks/user/useUserOrder'
+import { useCustomerOrderConnection } from '@/hooks/customer/useCustomerOrderConnection'
 import { useAuthStore } from '@/store/authStore'
 import { OrderStatus, OrderType, PaymentMethod } from '@/types/enums'
+import { isTerminalOrderStatus } from '@/utils/orderStatus'
+import OrderConnectionIndicator from '@/components/customer/orders/OrderConnectionIndicator'
 
 type EnumMap = Record<string, number>
 
@@ -85,9 +88,20 @@ function OrderDetails() {
     parsedOrderId,
     isValidOrderId && shouldUseUserOrder
   )
-  const { data: order, isLoading, isError } = shouldUseUserOrder
+  const orderQuery = shouldUseUserOrder
     ? userOrderQuery
     : publicOrderQuery
+  const { data: order, isLoading, isError } = orderQuery
+  const canReceiveLiveUpdates =
+    isValidOrderId && (!!lookupToken || (isAuthenticated && !!userId))
+  const hasActiveOrder = !order || !isTerminalOrderStatus(order.status)
+  const connectionStatus = useCustomerOrderConnection({
+    enabled: canReceiveLiveUpdates,
+    orderId: isValidOrderId ? parsedOrderId : null,
+    lookupToken,
+    snapshotReady: orderQuery.isFetched,
+    hasActiveOrders: hasActiveOrder,
+  })
 
   if (!isValidOrderId) {
     return (
@@ -154,6 +168,11 @@ function OrderDetails() {
             <div>
               <h1 className="text-3xl font-bold">Order #{order.id}</h1>
               <p className="mt-2 text-sm text-zinc-300">Placed on {createdAt}</p>
+              {canReceiveLiveUpdates && hasActiveOrder && (
+                <div className="mt-3">
+                  <OrderConnectionIndicator status={connectionStatus} />
+                </div>
+              )}
             </div>
             <span
               className={`inline-flex w-fit rounded-full px-4 py-2 text-sm font-semibold ${getStatusStyle(order.status)}`}

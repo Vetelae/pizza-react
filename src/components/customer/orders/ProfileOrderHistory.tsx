@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ProfileOrderDetailsModal from '@/components/customer/orders/ProfileOrderDetailsModal'
+import OrderConnectionIndicator from '@/components/customer/orders/OrderConnectionIndicator'
+import { useCustomerOrderConnection } from '@/hooks/customer/useCustomerOrderConnection'
 import { useUserOrders } from '@/hooks/user/useUserOrder'
 import { OrderStatus, OrderType } from '@/types/enums'
 import type { Order } from '@/types/order'
+import { isTerminalOrderStatus } from '@/utils/orderStatus'
 
 type EnumMap = Record<string, number>
 
@@ -84,8 +87,16 @@ const getOrderSummary = (order: Order) => {
 }
 
 export default function ProfileOrderHistory() {
-  const { data: orders, isLoading, isError } = useUserOrders()
+  const ordersQuery = useUserOrders()
+  const { data: orders, isLoading, isError } = ordersQuery
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null)
+  const hasActiveOrders =
+    !orders || orders.some(order => !isTerminalOrderStatus(order.status))
+  const connectionStatus = useCustomerOrderConnection({
+    enabled: true,
+    snapshotReady: ordersQuery.isFetched,
+    hasActiveOrders,
+  })
 
   const sortedOrders = useMemo(
     () =>
@@ -106,9 +117,14 @@ export default function ProfileOrderHistory() {
         </div>
 
         {sortedOrders.length > 0 && (
-          <p className="text-sm text-zinc-400">
-            {sortedOrders.length} {sortedOrders.length === 1 ? 'order' : 'orders'}
-          </p>
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <p className="text-sm text-zinc-400">
+              {sortedOrders.length} {sortedOrders.length === 1 ? 'order' : 'orders'}
+            </p>
+            {hasActiveOrders && (
+              <OrderConnectionIndicator status={connectionStatus} />
+            )}
+          </div>
         )}
       </div>
 
