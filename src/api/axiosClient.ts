@@ -94,17 +94,21 @@ const refreshAuthToken = async () => {
   }
 }
 
+export const getValidAccessToken = async (): Promise<string | null> => {
+  const { token, refreshToken } = useAuthStore.getState()
+
+  if (!token) return null
+
+  return refreshToken && shouldRefreshToken(token)
+    ? refreshAuthToken()
+    : token
+}
+
 axiosClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     if (!config.skipAuth) {
-      const { token, refreshToken } = useAuthStore.getState()
-
-      if (token) {
-        const authToken =
-          refreshToken && shouldRefreshToken(token)
-            ? await refreshAuthToken()
-            : token
-
+      const authToken = await getValidAccessToken()
+      if (authToken) {
         config.headers.Authorization = `Bearer ${authToken}`
       }
     }
