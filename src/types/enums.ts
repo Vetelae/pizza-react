@@ -3,6 +3,7 @@ export const OrderType = {
     Delivery: 1,
 } as const
 export type OrderType = typeof OrderType[keyof typeof OrderType]
+export type OrderTypeName = keyof typeof OrderType
 
 export const OrderStatus = {
     Pending: 0,
@@ -13,9 +14,11 @@ export const OrderStatus = {
     Cancelled: 5,
 } as const
 export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus]
+export type OrderStatusName = keyof typeof OrderStatus
 
 export const PaymentMethod = {
     Cash: 0,
     Card: 1,
 } as const
 export type PaymentMethod = typeof PaymentMethod[keyof typeof PaymentMethod]
+export type PaymentMethodName = keyof typeof PaymentMethod
