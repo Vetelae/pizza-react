@@ -14,9 +14,9 @@ import {
   useUpdateOrderStatus,
 } from '@/hooks/admin/useAdminOrder'
 import {
-  type OrderConnectionStatus,
   useOrderMonitoringConnection,
 } from '@/hooks/admin/useOrderMonitoringConnection'
+import type { OrderConnectionStatus } from '@/types/realtime'
 
 const CONNECTION_LABELS: Record<OrderConnectionStatus, string> = {
   connecting: 'Connecting',
