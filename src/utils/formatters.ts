@@ -5,6 +5,8 @@ const currencyFormatter = new Intl.NumberFormat(APP_LOCALE, {
   currency: 'EUR',
 })
 
+const numberFormatter = new Intl.NumberFormat(APP_LOCALE)
+
 const dateFormatter = new Intl.DateTimeFormat(APP_LOCALE, {
   day: '2-digit',
   month: '2-digit',
@@ -29,6 +31,9 @@ const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})/
 export const formatCurrency = (value: number) =>
   currencyFormatter.format(Number(value))
 
+export const formatNumber = (value: number) =>
+  numberFormatter.format(Number(value))
+
 export const formatDate = (value: string) => {
   const dateParts = ISO_DATE_PATTERN.exec(value)
 
@@ -51,6 +56,23 @@ export const formatDateWithWeekday = (value: string) => {
 
 export const formatDateTime = (value: string) =>
   dateTimeFormatter.format(new Date(value))
+
+export const formatTimeInTimeZone = (value: string, timeZone: string) => {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) return 'Unknown'
+
+  try {
+    return new Intl.DateTimeFormat(APP_LOCALE, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone,
+    }).format(date)
+  } catch {
+    return dateTimeFormatter.format(date)
+  }
+}
 
 export const toDateInputValue = (value: string) =>
   ISO_DATE_PATTERN.exec(value)?.[0] ?? ''

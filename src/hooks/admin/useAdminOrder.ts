@@ -3,6 +3,7 @@ import axios from 'axios'
 import type { UpdateOrderDto, UpdateOrderStatusDto } from '../../types/order'
 import { adminOrderApi } from '@/api/admin/adminOrderApi'
 import type { OrderStatus } from '@/types/enums'
+import { adminDashboardKeys } from './useAdminDashboard'
 
 export const adminOrderKeys = {
     all: ['admin', 'orders'] as const,
@@ -55,6 +56,7 @@ export const useUpdateOrder = () => {
         onSuccess: (updatedOrder) => {
             // Refresh the specific order and the full list
             queryClient.invalidateQueries({ queryKey: adminOrderKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
             queryClient.setQueryData(adminOrderKeys.detail(updatedOrder.id), updatedOrder)
         },
     })
@@ -69,10 +71,12 @@ export const useUpdateOrderStatus = () => {
         onSuccess: (updatedOrder) => {
             queryClient.setQueryData(adminOrderKeys.detail(updatedOrder.id), updatedOrder)
             queryClient.invalidateQueries({ queryKey: adminOrderKeys.active })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
         },
         onError: (error) => {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
                 queryClient.invalidateQueries({ queryKey: adminOrderKeys.active })
+                queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
             }
         },
     })
@@ -88,6 +92,7 @@ export const useDeleteOrder = () => {
             // Remove from cache and refresh list
             queryClient.removeQueries({ queryKey: adminOrderKeys.detail(deletedId) })
             queryClient.invalidateQueries({ queryKey: adminOrderKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
         },
     })
 }

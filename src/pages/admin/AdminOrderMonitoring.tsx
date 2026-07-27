@@ -120,7 +120,7 @@ export default function AdminOrderMonitoring() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[96rem]">
+    <div className="mx-auto w-full max-w-384">
       <header className="mb-5 flex flex-col gap-4 border-b border-gray-700 pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Order monitoring</h1>
