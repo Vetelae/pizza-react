@@ -9,6 +9,7 @@ import type {
 } from '@/types/enums'
 
 export { normalizeOrderStatus } from '@/utils/orderStatus'
+export { formatCurrency, formatDateTime } from '@/utils/formatters'
 
 type EnumMap = Record<string, number>
 
@@ -109,21 +110,6 @@ export const normalizePaymentMethod = (
   value: number | string
 ): PaymentMethodName | null =>
   normalizeEnumName(value, PaymentMethod) as PaymentMethodName | null
-
-export const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('fi-FI', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(Number(value))
-
-export const formatDateTime = (value: string) =>
-  new Date(value).toLocaleString('fi-FI', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
 
 export const formatElapsedTime = (value: string, now: number) => {
   const timestamp = new Date(value).getTime()

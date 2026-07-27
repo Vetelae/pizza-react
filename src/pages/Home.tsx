@@ -1,6 +1,7 @@
 import pizzaJpeg from '../assets/images/pizza.jpeg'
 import ig from '../assets/images/ig.png'
 import { useNews } from '@/hooks/public/useNews'
+import { formatDateWithWeekday } from '@/utils/formatters'
 
 function Home() {
   const { data: news, isLoading, isError } = useNews()
@@ -37,9 +38,7 @@ function Home() {
             {news?.map((item) => (
               <div key={item.id}>
                 <h2 className="text-orange p-3 font-bold text-xl md:text-2xl mb-4">
-                  {new Date(item.date).toLocaleDateString('en-GB', {
-                    weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric'
-                  })}
+                  {formatDateWithWeekday(item.date)}
                   <hr />
                 </h2>
                 <p className="text-orange pl-3 pr-3 text-sm md:text-base grow">

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useUserOrder } from '@/hooks/user/useUserOrder'
 import { OrderStatus, OrderType, PaymentMethod } from '@/types/enums'
+import { formatCurrency, formatDateTime } from '@/utils/formatters'
 
 interface ProfileOrderDetailsModalProps {
   orderId: number | null
@@ -69,15 +70,6 @@ const getPaymentLabel = (paymentMethod: number | string) => {
   return paymentKey ? paymentLabels[paymentKey] : 'Unknown'
 }
 
-const formatDate = (date: string) =>
-  new Date(date).toLocaleString('fi-FI', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
 export default function ProfileOrderDetailsModal({
   orderId,
   onClose,
@@ -86,7 +78,7 @@ export default function ProfileOrderDetailsModal({
 
   if (!orderId) return null
 
-  const createdAt = order ? formatDate(order.createdAt) : ''
+  const createdAt = order ? formatDateTime(order.createdAt) : ''
   const orderTotal = Number(order?.totalAmount ?? 0)
 
   return (
@@ -157,11 +149,11 @@ export default function ProfileOrderDetailsModal({
                         <div>
                           <p className="font-medium text-gray-900">{itemName}</p>
                           <p className="mt-1 text-sm text-gray-500">
-                            {item.quantity} x ${unitPrice.toFixed(2)}
+                            {item.quantity} x {formatCurrency(unitPrice)}
                           </p>
                         </div>
                         <p className="font-semibold text-gray-900">
-                          ${lineTotal.toFixed(2)}
+                          {formatCurrency(lineTotal)}
                         </p>
                       </div>
                     )
@@ -170,7 +162,7 @@ export default function ProfileOrderDetailsModal({
 
                 <div className="mt-5 flex items-center justify-between text-lg font-semibold text-gray-900">
                   <span>Total</span>
-                  <span>${orderTotal.toFixed(2)}</span>
+                  <span>{formatCurrency(orderTotal)}</span>
                 </div>
               </div>
 

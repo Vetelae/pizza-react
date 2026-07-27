@@ -1,5 +1,6 @@
 import type { MenuItem } from "@/types/menuItem";
 import type { Category } from "@/types/category";
+import { formatCurrency } from "@/utils/formatters";
 
 interface MenuItemsTableProps {
   menuItems: MenuItem[];
@@ -114,7 +115,7 @@ function MenuItemRow({ menuItem, categories, onEdit, onDelete }: MenuItemRowProp
         )}
       </td>
       <td className="px-4 py-3 text-gray-600">{categoryName}</td>
-      <td className="px-4 py-3 text-gray-900">€{menuItem.price.toFixed(2)}</td>
+      <td className="px-4 py-3 text-gray-900">{formatCurrency(menuItem.price)}</td>
       <td className="px-4 py-3">
         <span
           className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${

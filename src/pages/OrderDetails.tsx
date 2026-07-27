@@ -5,6 +5,7 @@ import { useCustomerOrderConnection } from '@/hooks/customer/useCustomerOrderCon
 import { useAuthStore } from '@/store/authStore'
 import { OrderStatus, OrderType, PaymentMethod } from '@/types/enums'
 import { isTerminalOrderStatus } from '@/utils/orderStatus'
+import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import OrderConnectionIndicator from '@/components/customer/orders/OrderConnectionIndicator'
 
 type EnumMap = Record<string, number>
@@ -149,13 +150,7 @@ function OrderDetails() {
     )
   }
 
-  const createdAt = new Date(order.createdAt).toLocaleString('fi-FI', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  const createdAt = formatDateTime(order.createdAt)
 
   const orderTotal = Number(order.totalAmount ?? 0)
 
@@ -199,11 +194,11 @@ function OrderDetails() {
                   <div>
                     <p className="font-medium text-gray-900">{itemName}</p>
                     <p className="mt-1 text-sm text-gray-500">
-                      {item.quantity} x ${unitPrice.toFixed(2)}
+                      {item.quantity} x {formatCurrency(unitPrice)}
                     </p>
                   </div>
                   <p className="font-semibold text-gray-900">
-                    ${lineTotal.toFixed(2)}
+                    {formatCurrency(lineTotal)}
                   </p>
                   </div>
                 )
@@ -212,7 +207,7 @@ function OrderDetails() {
 
             <div className="mt-6 flex items-center justify-between text-lg font-semibold text-gray-900">
               <span>Total</span>
-              <span>${orderTotal.toFixed(2)}</span>
+              <span>{formatCurrency(orderTotal)}</span>
             </div>
           </div>
 

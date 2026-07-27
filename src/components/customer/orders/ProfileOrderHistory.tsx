@@ -7,6 +7,7 @@ import { useUserOrders } from '@/hooks/user/useUserOrder'
 import { OrderStatus, OrderType } from '@/types/enums'
 import type { Order } from '@/types/order'
 import { isTerminalOrderStatus } from '@/utils/orderStatus'
+import { formatCurrency, formatDateTime } from '@/utils/formatters'
 
 type EnumMap = Record<string, number>
 
@@ -59,15 +60,6 @@ const getTypeLabel = (type: number | string) => {
   const typeKey = normalizeEnumValue(type, OrderType)
   return typeKey ? typeLabels[typeKey] : 'Unknown'
 }
-
-const formatDate = (date: string) =>
-  new Date(date).toLocaleString('fi-FI', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
 
 const getOrderSummary = (order: Order) => {
   if (!order.items.length) {
@@ -176,7 +168,7 @@ export default function ProfileOrderHistory() {
                     </div>
 
                     <p className="mt-1 text-sm text-zinc-400">
-                      Placed on {formatDate(order.createdAt)}
+                      Placed on {formatDateTime(order.createdAt)}
                     </p>
                     <p className="mt-3 text-sm text-zinc-300">{getOrderSummary(order)}</p>
                   </div>
@@ -185,7 +177,7 @@ export default function ProfileOrderHistory() {
                     <div className="text-left sm:text-right">
                       <p className="text-sm text-zinc-400">{getTypeLabel(order.type)}</p>
                       <p className="mt-1 text-lg font-bold text-zinc-100">
-                        ${orderTotal.toFixed(2)}
+                        {formatCurrency(orderTotal)}
                       </p>
                     </div>
 
