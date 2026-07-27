@@ -1,4 +1,5 @@
 import { useCart, useRemoveCartItem, useUpdateCartItem } from "@/hooks/public/useCart"
+import { formatCurrency } from "@/utils/formatters"
 
 interface CartViewProps {
   onCheckout: () => void
@@ -42,7 +43,7 @@ export default function CartView({ onCheckout }: CartViewProps) {
             <div className="flex-1 min-w-0">
               <p className="text-orange font-semibold text-sm truncate">{item.menuItemName}</p>
               <p className="text-zinc-400 text-xs mt-0.5">
-                ${item.unitPrice.toFixed(2)} each · ${item.total.toFixed(2)}
+                {formatCurrency(item.unitPrice)} each · {formatCurrency(item.total)}
               </p>
 
               {/* Quantity controls */}
@@ -90,7 +91,7 @@ export default function CartView({ onCheckout }: CartViewProps) {
         <div className="flex justify-between items-center">
           <span className="text-zinc-400 text-sm">Subtotal</span>
           <span className="text-orange font-bold text-lg">
-            ${cart?.subtotal?.toFixed(2) ?? '0.00'}
+            {formatCurrency(cart?.subtotal ?? 0)}
           </span>
         </div>
         <button

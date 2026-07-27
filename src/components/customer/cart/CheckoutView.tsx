@@ -6,6 +6,7 @@ import { useCart, useCheckout } from '@/hooks/public/useCart'
 import { OrderType, PaymentMethod } from '@/types/enums'
 import { useProfile } from '@/hooks/public/useAuth'
 import { useAuthStore } from '@/store/authStore'
+import { formatCurrency } from '@/utils/formatters'
 
 interface CheckoutViewProps {
   onBack: () => void
@@ -94,14 +95,14 @@ export default function CheckoutView({ onBack, onClose }: CheckoutViewProps) {
               <span className="truncate mr-2">
                 {item.menuItemName} × {item.quantity}
               </span>
-              <span className="shrink-0">${item.total.toFixed(2)}</span>
+              <span className="shrink-0">{formatCurrency(item.total)}</span>
             </li>
           ))}
         </ul>
         <div className="border-t border-zinc-700 pt-2 flex justify-between">
           <span className="text-zinc-400 text-xs">Total</span>
           <span className="text-orange font-bold text-sm">
-            ${cart?.subtotal?.toFixed(2) ?? '0.00'}
+            {formatCurrency(cart?.subtotal ?? 0)}
           </span>
         </div>
       </div>

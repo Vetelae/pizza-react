@@ -1,4 +1,5 @@
 import type { News } from "@/types/news";
+import { formatDate } from "@/utils/formatters";
 
 interface NewsTableProps {
   news: News[];
@@ -79,7 +80,7 @@ function NewsRow({ news, onEdit, onDelete }: NewsRowProps) {
         {news.title}
       </td>
       <td className="px-4 py-3 text-gray-500">
-        {new Date(news.date).toLocaleDateString()}
+        {formatDate(news.date)}
       </td>
       <td className="px-4 py-3 text-right space-x-2">
         <button

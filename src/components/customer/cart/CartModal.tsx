@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { MenuItem } from "@/types/menuItem";
 import { useAddCartItem } from "@/hooks/public/useCart";
+import { formatCurrency } from "@/utils/formatters";
 
 interface CartModalProps {
   isOpen: boolean;
@@ -60,7 +61,7 @@ export function CartModal({ isOpen, menuItem, onClose }: CartModalProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-4">
           {/* Price display */}
           <p className="text-sm text-gray-500">
-            Price: <span className="font-semibold text-gray-900">${menuItem.price.toFixed(2)}</span>
+            Price: <span className="font-semibold text-gray-900">{formatCurrency(menuItem.price)}</span>
           </p>
 
           {/* Quantity */}

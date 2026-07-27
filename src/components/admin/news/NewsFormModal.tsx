@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { News } from "@/types/news";
+import { toDateInputValue } from "@/utils/formatters";
 
 interface NewsFormModalProps {
   isOpen: boolean;
@@ -37,7 +38,11 @@ export function NewsFormModal({
     if (isOpen) {
       reset(
         isEditMode
-          ? { title: editingNews.title, content: editingNews.content, date: editingNews.date }
+          ? {
+              title: editingNews.title,
+              content: editingNews.content,
+              date: toDateInputValue(editingNews.date),
+            }
           : { title: "", content: "", date: "" }
       );
     }

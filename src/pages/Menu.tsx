@@ -3,6 +3,7 @@ import type { MenuItem } from '@/types/menuItem'
 import { CartModal } from '@/components/customer/cart/CartModal'
 import { useMenuItems } from '@/hooks/public/useMenuItems'
 import { useCategories } from '@/hooks/public/useCategories'
+import { formatCurrency } from '@/utils/formatters'
 
 function Menu() {
   const { data: menuItems, isLoading: menuItemsLoading, isError: menuItemsError } = useMenuItems()
@@ -115,7 +116,7 @@ function Menu() {
               <h2 className="text-orange font-bold text-xl md:text-2xl mb-4">{item.name}</h2>
               <p className="text-orange text-sm md:text-base grow">{item.description}</p>
               <h2 className="text-orange text-shadow-md text-shadow-glow text-xl md:text-2xl text-center mt-4">
-                {item.price}$
+                {formatCurrency(item.price)}
               </h2>
               <img
                 src={`${import.meta.env.VITE_BASE_URL}${item.imagePath}`}
