@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   FaBookOpen,
   FaClipboardList,
@@ -10,7 +10,10 @@ import { Link } from 'react-router-dom'
 import pizzaJpeg from '../assets/images/pizza.jpeg'
 import ig from '../assets/images/ig.png'
 import { useNews } from '@/hooks/public/useNews'
-import { formatDateWithWeekday } from '@/utils/formatters'
+import {
+  formatDateWithWeekday,
+  toDateInputValue,
+} from '@/utils/formatters'
 
 interface SectionHeadingProps {
   children: ReactNode
@@ -61,17 +64,56 @@ function SectionHeading({ children, id }: SectionHeadingProps) {
   )
 }
 
+const getLocalDateValue = (date: Date) =>
+  [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-')
+
+function useTodayDateValue() {
+  const [today, setToday] = useState(() => getLocalDateValue(new Date()))
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>
+
+    const scheduleNextDay = () => {
+      const now = new Date()
+      const nextDay = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1,
+      )
+
+      timeoutId = setTimeout(() => {
+        setToday(getLocalDateValue(new Date()))
+        scheduleNextDay()
+      }, nextDay.getTime() - now.getTime())
+    }
+
+    scheduleNextDay()
+
+    return () => clearTimeout(timeoutId)
+  }, [])
+
+  return today
+}
+
 function Home() {
   const { data: news, isLoading, isError } = useNews()
+  const today = useTodayDateValue()
   const featuredNews = useMemo(
     () =>
       [...(news ?? [])]
+        .filter((item) => toDateInputValue(item.date) >= today)
         .sort(
           (first, second) =>
-            new Date(second.date).getTime() - new Date(first.date).getTime(),
+            toDateInputValue(first.date).localeCompare(
+              toDateInputValue(second.date),
+            ) || first.id - second.id,
         )
-        .slice(0, 3),
-    [news],
+        .slice(0, 2),
+    [news, today],
   )
 
   return (
