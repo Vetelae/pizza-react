@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
+import About from './pages/About'
 import Footer from './components/Footer'
 import LoginPanel from './components/auth/LoginPanel'
 import CartPanel from './components/customer/cart/CartPanel'
@@ -27,6 +28,7 @@ function App() {
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
+        <Route path="/about" element={<About />} />
         <Route path="/orders/:orderId" element={<OrderDetails />} />
         <Route path="/confirm-email" element={<ConfirmEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
