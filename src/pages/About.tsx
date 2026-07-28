@@ -1,5 +1,6 @@
 import { FaFire, FaHeart, FaUsers, FaUtensils } from 'react-icons/fa'
 import oven from '../assets/images/oven.png'
+import AboutGallery from '@/components/about/AboutGallery'
 
 const highlights = [
   {
@@ -104,6 +105,7 @@ function About() {
           </div>
         </div>
       </section>
+      <AboutGallery />
     </div>
   )
 }
