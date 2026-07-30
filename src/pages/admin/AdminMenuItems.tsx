@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FiPlus } from "react-icons/fi";
 import type { MenuItem } from "@/types/menuItem";
 import { useMenuItems } from "@/hooks/public/useMenuItems";
 import { useCategories } from "@/hooks/public/useCategories";
@@ -100,16 +101,25 @@ export default function AdminMenuItems() {
     uploadImage.isPending;
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Menu Items</h1>
+    <div className="mx-auto w-full max-w-384">
+      <header className="mb-5 flex flex-col gap-4 border-b border-gray-700 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Menu items</h1>
+          <p className="mt-1 text-sm text-gray-400">
+            {menuItems
+              ? `${menuItems.length} ${menuItems.length === 1 ? "menu item" : "menu items"}`
+              : "Manage the menu, pricing and availability"}
+          </p>
+        </div>
         <button
+          type="button"
           onClick={handleAdd}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded bg-orange px-4 text-sm font-bold text-gray-950 transition hover:brightness-110"
         >
-          + Add Menu Item
+          <FiPlus aria-hidden="true" />
+          Add menu item
         </button>
-      </div>
+      </header>
       <MenuItemsTable
         menuItems={menuItems ?? []}
         categories={categories}
