@@ -25,7 +25,10 @@ export function CategoriesTable({
 
   if (isError) {
     return (
-      <div className="py-10 text-center text-sm text-red-500">
+      <div
+        className="border border-red-800 bg-gray-800 px-5 py-10 text-center text-sm text-red-300"
+        role="alert"
+      >
         Failed to load categories. Please try again.
       </div>
     );
@@ -33,29 +36,29 @@ export function CategoriesTable({
 
   if (categories.length === 0) {
     return (
-      <div className="py-10 text-center text-sm text-gray-500">
+      <div className="border border-dashed border-gray-700 bg-gray-800/70 px-5 py-10 text-center text-sm text-gray-400">
         No categories yet.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-md border border-gray-700 bg-gray-800">
+      <table className="min-w-full divide-y divide-gray-700 text-sm">
+        <thead className="bg-gray-900/60">
           <tr>
-            <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-400">
               Name
             </th>
-            <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-400">
               Image
             </th>
-            <th className="px-4 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-gray-400">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-700 bg-gray-800">
           {categories.map((category) => (
             <CategoryRow
               key={category.id}
@@ -72,31 +75,33 @@ export function CategoriesTable({
 
 function CategoryRow({ category, onEdit, onDelete }: CategoryRowProps) {
   return (
-    <tr className="hover:bg-gray-50 transition-colors">
-      <td className="px-4 py-3 font-medium text-gray-900">{category.name}</td>
+    <tr className="transition-colors hover:bg-gray-700/50">
+      <td className="px-4 py-3 font-semibold text-white">{category.name}</td>
       <td className="px-4 py-3">
         {category.imagePath ? (
           <img
             src={`${import.meta.env.VITE_BASE_URL}${category.imagePath}`}
             alt={category.name}
-            className="h-10 w-10 rounded object-cover"
+            className="h-10 w-10 rounded border border-gray-600 object-cover"
           />
         ) : (
-          <div className="h-10 w-10 rounded bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+          <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-700 text-xs text-gray-400">
             None
           </div>
         )}
       </td>
-      <td className="px-4 py-3 text-right space-x-2">
+      <td className="space-x-2 whitespace-nowrap px-4 py-3 text-right">
         <button
+          type="button"
           onClick={() => onEdit(category)}
-          className="px-3 py-1 text-xs font-medium text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors"
+          className="rounded border border-gray-600 px-3 py-1.5 text-xs font-semibold text-gray-200 transition hover:border-gray-500 hover:bg-gray-700 hover:text-white"
         >
           Edit
         </button>
         <button
+          type="button"
           onClick={() => onDelete(category.id)}
-          className="px-3 py-1 text-xs font-medium text-red-600 border border-red-200 rounded hover:bg-red-50 transition-colors"
+          className="rounded border border-red-800 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-950/40"
         >
           Delete
         </button>
@@ -107,18 +112,23 @@ function CategoryRow({ category, onEdit, onDelete }: CategoryRowProps) {
 
 function TableSkeleton() {
   return (
-    <div className="rounded-lg border border-gray-200 overflow-hidden">
-      <div className="bg-gray-50 h-10" />
+    <div
+      className="overflow-hidden rounded-md border border-gray-700"
+      aria-label="Loading categories"
+      aria-busy="true"
+    >
+      <div className="h-10 bg-gray-900/60" />
       {[...Array(4)].map((_, i) => (
         <div
           key={i}
-          className="h-12 border-t border-gray-100 bg-white flex items-center px-4 gap-4"
+          className="flex h-14 items-center gap-4 border-t border-gray-700 bg-gray-800 px-4"
         >
-          <div className="h-3 bg-gray-200 rounded w-1/4 animate-pulse" />
-          <div className="h-8 w-8 bg-gray-200 rounded animate-pulse" />
-          <div className="h-3 bg-gray-200 rounded w-1/8 animate-pulse ml-auto" />
+          <div className="h-3 w-1/4 animate-pulse rounded bg-gray-700" />
+          <div className="h-8 w-8 animate-pulse rounded bg-gray-700" />
+          <div className="ml-auto h-3 w-1/8 animate-pulse rounded bg-gray-700" />
         </div>
       ))}
+      <span className="sr-only">Loading categories</span>
     </div>
   );
 }

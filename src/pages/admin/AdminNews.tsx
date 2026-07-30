@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FiPlus } from "react-icons/fi";
 import { useCreateNews, useDeleteNews, useUpdateNews } from "@/hooks/admin/useAdminNews";
 import { useNews } from "@/hooks/public/useNews";
 import { NewsTable } from "@/components/admin/news/NewsTable";
@@ -54,16 +55,25 @@ const handleSubmit = (data: NewsFormValues) => {
 };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">News</h1>
+    <div className="mx-auto w-full max-w-384">
+      <header className="mb-5 flex flex-col gap-4 border-b border-gray-700 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">News</h1>
+          <p className="mt-1 text-sm text-gray-400">
+            {news
+              ? `${news.length} ${news.length === 1 ? "article" : "articles"}`
+              : "Manage customer-facing news articles"}
+          </p>
+        </div>
         <button
+          type="button"
           onClick={handleAdd}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded bg-orange px-4 text-sm font-bold text-gray-950 transition hover:brightness-110"
         >
-          + Add News
+          <FiPlus aria-hidden="true" />
+          Add news
         </button>
-      </div>
+      </header>
 
       <NewsTable
         news={news ?? []}
