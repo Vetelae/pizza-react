@@ -1,23 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import type { UpdateOrderDto, UpdateOrderStatusDto } from '../../types/order'
+import type {
+    OrderHistoryQuery,
+    UpdateOrderDto,
+    UpdateOrderStatusDto,
+} from '../../types/order'
 import { adminOrderApi } from '@/api/admin/adminOrderApi'
-import type { OrderStatus } from '@/types/enums'
 import { adminDashboardKeys } from './useAdminDashboard'
 
 export const adminOrderKeys = {
-    all: ['admin', 'orders'] as const,
     active: ['admin', 'orders', 'active'] as const,
+    historyRoot: ['admin', 'orders', 'history'] as const,
+    history: (query: OrderHistoryQuery) =>
+        ['admin', 'orders', 'history', query] as const,
     detail: (id: number) => ['admin', 'orders', id] as const,
-    byStatus: (status: OrderStatus) => ['admin', 'orders', 'status', status] as const,
-}
-
-// All orders (admin dashboard / order list)
-export const useAdminOrders = () => {
-    return useQuery({
-        queryKey: adminOrderKeys.all,
-        queryFn: adminOrderApi.getAll,
-    })
 }
 
 export const useActiveAdminOrders = () => {
@@ -29,11 +25,19 @@ export const useActiveAdminOrders = () => {
     })
 }
 
-// Orders filtered by status (e.g. "Pending", "InProgress")
-export const useAdminOrdersByStatus = (status: OrderStatus) => {
+export const useAdminOrderHistory = (query: OrderHistoryQuery) => {
     return useQuery({
-        queryKey: adminOrderKeys.byStatus(status),
-        queryFn: () => adminOrderApi.getByStatus(status),
+        queryKey: adminOrderKeys.history(query),
+        queryFn: () => adminOrderApi.getHistory(query),
+        enabled:
+            query.period !== 'Custom' ||
+            Boolean(
+                query.fromDate &&
+                query.toDate &&
+                query.fromDate <= query.toDate
+            ),
+        placeholderData: (previousData) => previousData,
+        staleTime: 30_000,
     })
 }
 
@@ -54,8 +58,8 @@ export const useUpdateOrder = () => {
         mutationFn: ({ id, dto }: { id: number; dto: UpdateOrderDto }) =>
             adminOrderApi.updateOrder(id, dto),
         onSuccess: (updatedOrder) => {
-            // Refresh the specific order and the full list
-            queryClient.invalidateQueries({ queryKey: adminOrderKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminOrderKeys.active })
+            queryClient.invalidateQueries({ queryKey: adminOrderKeys.historyRoot })
             queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
             queryClient.setQueryData(adminOrderKeys.detail(updatedOrder.id), updatedOrder)
         },
@@ -71,6 +75,7 @@ export const useUpdateOrderStatus = () => {
         onSuccess: (updatedOrder) => {
             queryClient.setQueryData(adminOrderKeys.detail(updatedOrder.id), updatedOrder)
             queryClient.invalidateQueries({ queryKey: adminOrderKeys.active })
+            queryClient.invalidateQueries({ queryKey: adminOrderKeys.historyRoot })
             queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
         },
         onError: (error) => {
@@ -89,9 +94,9 @@ export const useDeleteOrder = () => {
     return useMutation({
         mutationFn: (id: number) => adminOrderApi.deleteOrder(id),
         onSuccess: (_, deletedId) => {
-            // Remove from cache and refresh list
             queryClient.removeQueries({ queryKey: adminOrderKeys.detail(deletedId) })
-            queryClient.invalidateQueries({ queryKey: adminOrderKeys.all })
+            queryClient.invalidateQueries({ queryKey: adminOrderKeys.active })
+            queryClient.invalidateQueries({ queryKey: adminOrderKeys.historyRoot })
             queryClient.invalidateQueries({ queryKey: adminDashboardKeys.todayKpis })
         },
     })

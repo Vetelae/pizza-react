@@ -13,6 +13,7 @@ import AdminLayout from '@/pages/admin/AdminLayout'
 import AdminCategories from '@/pages/admin/AdminCategories'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrderMonitoring from './pages/admin/AdminOrderMonitoring'
+import AdminOrderHistory from './pages/admin/AdminOrderHistory'
 import AdminMenuItems from './pages/admin/AdminMenuItems'
 import AdminNews from './pages/admin/AdminNews'
 import Navbar from './components/NavBar'
@@ -43,6 +44,7 @@ function App() {
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="order-monitoring" element={<AdminOrderMonitoring />} />
+              <Route path="order-history" element={<AdminOrderHistory />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="menu-items" element={<AdminMenuItems />} />
               <Route path="news" element={<AdminNews />} />
