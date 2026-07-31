@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { FaTimes } from 'react-icons/fa'
 import { useCartStore } from '@/store/cartStore'
+import { useCart } from '@/hooks/public/useCart'
 import CartView from './CartView'
 import CheckoutView from './CheckoutView'
-import { useCart } from '@/hooks/public/useCart'
 
 type View = 'cart' | 'checkout'
 
@@ -10,79 +11,165 @@ export default function CartPanel() {
   const [view, setView] = useState<View>('cart')
   const { isCartOpen, closeCart } = useCartStore()
   const { data: cart } = useCart()
+  const panelRef = useRef<HTMLElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null)
 
-  const itemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0
+  const itemCount =
+    cart?.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0
 
-  // Escape key
+  const onClose = useCallback(() => {
+    closeCart()
+    setTimeout(() => setView('cart'), 300)
+  }, [closeCart])
+
   useEffect(() => {
     if (!isCartOpen) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    document.addEventListener('keydown', handler)
-    return () => document.removeEventListener('keydown', handler)
-  }, [isCartOpen])
 
-  // Scroll lock
+    previouslyFocusedElementRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+
+    const focusableSelector = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',')
+
+    const animationFrame = requestAnimationFrame(() => {
+      const firstFocusableElement =
+        panelRef.current?.querySelector<HTMLElement>(focusableSelector)
+      const initialFocusTarget = firstFocusableElement ?? panelRef.current
+
+      initialFocusTarget?.focus()
+    })
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+        return
+      }
+
+      if (event.key !== 'Tab' || !panelRef.current) return
+
+      const focusableElements = Array.from(
+        panelRef.current.querySelectorAll<HTMLElement>(focusableSelector)
+      )
+
+      if (focusableElements.length === 0) {
+        event.preventDefault()
+        panelRef.current.focus()
+        return
+      }
+
+      const firstElement = focusableElements[0]
+      const lastElement = focusableElements[focusableElements.length - 1]
+
+      if (!panelRef.current.contains(document.activeElement)) {
+        event.preventDefault()
+        const focusTarget = event.shiftKey ? lastElement : firstElement
+        focusTarget.focus()
+      } else if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault()
+        lastElement.focus()
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault()
+        firstElement.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      cancelAnimationFrame(animationFrame)
+      document.removeEventListener('keydown', handleKeyDown)
+      previouslyFocusedElementRef.current?.focus()
+    }
+  }, [isCartOpen, onClose])
+
+  useEffect(() => {
+    if (!isCartOpen) return
+
+    const animationFrame = requestAnimationFrame(() => {
+      titleRef.current?.focus()
+    })
+
+    return () => cancelAnimationFrame(animationFrame)
+  }, [isCartOpen, view])
+
   useEffect(() => {
     document.documentElement.style.overflow = isCartOpen ? 'hidden' : ''
-    return () => { document.documentElement.style.overflow = '' }
+    return () => {
+      document.documentElement.style.overflow = ''
+    }
   }, [isCartOpen])
-
-  const onClose = () => {
-    closeCart()
-    setTimeout(() => setView('cart'), 300) // reset view after slide-out animation
-  }
 
   return (
     <>
-      {/* Backdrop */}
       <div
         aria-hidden="true"
         onClick={onClose}
-        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300
-          ${isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+          isCartOpen
+            ? 'pointer-events-auto opacity-100'
+            : 'pointer-events-none opacity-0'
+        }`}
       />
 
-      {/* Panel */}
       <aside
+        ref={panelRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-label="Shopping cart"
-        className={`fixed top-0 right-0 h-full w-96 bg-white dark:bg-zinc-900
-          border-l border-zinc-100 dark:border-zinc-800 z-50
-          flex flex-col p-8 transition-transform duration-300 ease-in-out
-          ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        aria-labelledby="cart-panel-title"
+        className={`fixed top-0 right-0 z-50 flex h-full w-full max-w-full flex-col
+          border-l border-zinc-200 bg-white p-5 outline-none transition-transform
+          duration-300 ease-in-out sm:w-107.5 sm:p-6 ${
+            isCartOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            <h2
+              ref={titleRef}
+              id="cart-panel-title"
+              tabIndex={-1}
+              className="text-xl font-bold text-zinc-900 outline-none"
+            >
               {view === 'cart' ? 'Your Cart' : 'Checkout'}
             </h2>
             {view === 'cart' && itemCount > 0 && (
-              <span className="bg-orange text-gray-900 text-xs font-bold px-2 py-0.5 rounded-full">
+              <span
+                aria-label={`${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+                aria-live="polite"
+                className="rounded-full bg-orange px-2 py-0.5 text-xs font-bold text-gray-900"
+              >
                 {itemCount}
               </span>
             )}
           </div>
           <button
+            type="button"
             onClick={onClose}
             aria-label="Close panel"
-            className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200
-              p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="rounded-lg p-2 text-zinc-400 transition-colors
+              hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-2
+              focus-visible:outline-offset-2 focus-visible:outline-orange"
           >
-            ✕
+            <FaTimes aria-hidden="true" />
           </button>
         </div>
 
-        {/* View switcher */}
         {view === 'cart' && (
           <CartView onCheckout={() => setView('checkout')} />
         )}
         {view === 'checkout' && (
-          <CheckoutView
-            onBack={() => setView('cart')}
-            onClose={onClose}
-          />
+          <CheckoutView onBack={() => setView('cart')} onClose={onClose} />
         )}
       </aside>
     </>

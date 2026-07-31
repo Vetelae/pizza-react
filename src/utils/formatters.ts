@@ -29,7 +29,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat(APP_LOCALE, {
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})/
 
 export const formatCurrency = (value: number) =>
-  currencyFormatter.format(Number(value))
+  currencyFormatter.format(Number(value)).replace('.', ',')
 
 export const formatNumber = (value: number) =>
   numberFormatter.format(Number(value))
