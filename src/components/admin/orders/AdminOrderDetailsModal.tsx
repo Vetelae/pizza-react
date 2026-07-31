@@ -22,14 +22,14 @@ import {
 
 interface AdminOrderDetailsModalProps {
   orderId: number | null
-  isChangingStatus: boolean
+  isChangingStatus?: boolean
   onClose: () => void
-  onCancel: (orderId: number) => Promise<void>
+  onCancel?: (orderId: number) => Promise<void>
 }
 
 export default function AdminOrderDetailsModal({
   orderId,
-  isChangingStatus,
+  isChangingStatus = false,
   onClose,
   onCancel,
 }: AdminOrderDetailsModalProps) {
@@ -58,7 +58,8 @@ export default function AdminOrderDetailsModal({
   const status = order ? normalizeOrderStatus(order.status) : null
   const type = order ? normalizeOrderType(order.type) : null
   const paymentMethod = order ? normalizePaymentMethod(order.paymentMethod) : null
-  const canCancel = status !== 'Completed' && status !== 'Cancelled'
+  const canCancel =
+    Boolean(onCancel) && status !== 'Completed' && status !== 'Cancelled'
 
   const timeline = order
     ? [
@@ -72,6 +73,8 @@ export default function AdminOrderDetailsModal({
     : []
 
   const cancelOrder = async () => {
+    if (!onCancel) return
+
     setCancelError(null)
     try {
       await onCancel(orderId)

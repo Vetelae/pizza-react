@@ -38,7 +38,7 @@ const navigationSections: AdminNavSection[] = [
         icon: LuClipboardList,
         showActiveOrderCount: true,
       },
-      { label: 'Order History', icon: LuHistory },
+      { to: '/admin/order-history', label: 'Order History', icon: LuHistory },
     ],
   },
   {

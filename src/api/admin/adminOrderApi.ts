@@ -2,27 +2,33 @@ import axiosClient from '../axiosClient'
 import type {
     Order,
     OrderCard,
+    OrderHistoryQuery,
+    OrderHistoryResponse,
     UpdateOrderDto,
     UpdateOrderStatusDto,
 } from '../../types/order'
-import type { OrderStatus } from '@/types/enums'
 
 export const adminOrderApi = {
-    // GET: All orders
-    getAll: async (): Promise<Order[]> => {
-        const { data } = await axiosClient.get<Order[]>('admin/orders')
-        return data
-    },
-
     // GET: Lightweight active orders for the monitoring board
     getActive: async (): Promise<OrderCard[]> => {
         const { data } = await axiosClient.get<OrderCard[]>('admin/orders/active')
         return data
     },
 
-    // GET: Orders filtered by status
-    getByStatus: async (status: OrderStatus): Promise<Order[]> => {
-        const { data } = await axiosClient.get<Order[]>(`admin/orders/status/${status}`)
+    // GET: Paginated completed and cancelled order history
+    getHistory: async (query: OrderHistoryQuery): Promise<OrderHistoryResponse> => {
+        const { data } = await axiosClient.get<OrderHistoryResponse>(
+            'admin/orders/history',
+            {
+                params: {
+                    ...query,
+                    search: query.search?.trim() || undefined,
+                    status: query.status || undefined,
+                    fromDate: query.period === 'Custom' ? query.fromDate : undefined,
+                    toDate: query.period === 'Custom' ? query.toDate : undefined,
+                },
+            }
+        )
         return data
     },
 

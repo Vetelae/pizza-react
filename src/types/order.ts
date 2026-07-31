@@ -38,6 +38,50 @@ export interface OrderCard {
     totalAmount: number;
 }
 
+export const OrderHistoryPeriod = {
+    Today: 'Today',
+    Yesterday: 'Yesterday',
+    Last7Days: 'Last7Days',
+    Last30Days: 'Last30Days',
+    ThisMonth: 'ThisMonth',
+    LastMonth: 'LastMonth',
+    Custom: 'Custom',
+} as const
+
+export type OrderHistoryPeriod =
+    typeof OrderHistoryPeriod[keyof typeof OrderHistoryPeriod]
+
+export type OrderHistoryStatus = 'Completed' | 'Cancelled'
+
+export interface OrderHistoryQuery {
+    page: number;
+    pageSize: 20 | 50 | 100;
+    period: OrderHistoryPeriod;
+    fromDate?: string;
+    toDate?: string;
+    status?: OrderHistoryStatus;
+    search?: string;
+}
+
+export interface OrderHistoryItem {
+    id: number;
+    createdAt: string;
+    customerName: string;
+    customerPhone: string;
+    status: OrderStatus | keyof typeof OrderStatus;
+    type: OrderType | keyof typeof OrderType;
+    itemCount: number;
+    totalAmount: number;
+}
+
+export interface OrderHistoryResponse {
+    items: OrderHistoryItem[];
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+}
+
 export interface OrderStatusChangedEvent {
     orderId: number;
     oldStatus: OrderStatusName;
