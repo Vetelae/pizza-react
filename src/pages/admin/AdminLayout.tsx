@@ -123,8 +123,8 @@ function SidebarNavigation({
           className={
             sectionIndex > 0 && (mobile || showDesktopLabels)
               ? mobile
-                ? 'mt-5 border-t border-white/[0.06] pt-5'
-                : 'mt-2 lg:mt-5 lg:border-t lg:border-white/[0.06] lg:pt-5'
+                ? 'mt-5 border-t border-white/6 pt-5'
+                : 'mt-2 lg:mt-5 lg:border-t lg:border-white/6 lg:pt-5'
               : sectionIndex > 0
                 ? 'mt-2'
                 : ''
@@ -185,7 +185,7 @@ function SidebarNavigation({
                     `group relative flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-orange/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 ${
                       isActive
                         ? 'bg-orange/10 text-white'
-                        : 'text-gray-300 hover:bg-white/[0.05] hover:text-white'
+                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
                     } ${itemAlignmentClassName}`
                   }
                 >
@@ -303,14 +303,14 @@ export default function AdminLayout() {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-gray-900">
-      <div className="flex h-12 items-center border-b border-white/[0.06] bg-gray-800 px-3 md:hidden">
+      <div className="flex h-12 items-center border-b border-white/6 bg-gray-800 px-3 md:hidden">
         <button
           ref={mobileMenuButtonRef}
           type="button"
           onClick={() => setIsMobileOpen(true)}
           aria-controls="admin-mobile-sidebar"
           aria-expanded={isMobileOpen}
-          className="inline-flex h-9 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-gray-200 outline-none transition hover:bg-white/[0.05] hover:text-white focus-visible:ring-2 focus-visible:ring-orange/80"
+          className="inline-flex h-9 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-gray-200 outline-none transition hover:bg-white/5 hover:text-white focus-visible:ring-2 focus-visible:ring-orange/80"
         >
           <LuMenu className="text-xl text-orange" aria-hidden="true" />
           Admin navigation
@@ -319,8 +319,8 @@ export default function AdminLayout() {
 
       <div className="flex min-h-0 flex-1">
         <aside
-          className={`sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 self-start border-r border-white/[0.06] bg-gradient-to-b from-gray-800 to-gray-900/95 px-2 py-4 shadow-[4px_0_18px_rgba(0,0,0,0.12)] transition-[width] duration-200 motion-reduce:transition-none md:block md:w-[4.5rem] ${
-            isDesktopCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-52'
+          className={`sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 self-start border-r border-white/6 bg-linear-to-b from-gray-800 to-gray-900/95 px-2 py-4 shadow-[4px_0_18px_rgba(0,0,0,0.12)] transition-[width] duration-200 motion-reduce:transition-none md:block md:w-18 ${
+            isDesktopCollapsed ? 'lg:w-18' : 'lg:w-52'
           }`}
         >
           <div
@@ -339,7 +339,7 @@ export default function AdminLayout() {
               title={
                 isDesktopCollapsed ? 'Expand admin sidebar' : 'Collapse admin sidebar'
               }
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-400 outline-none transition hover:bg-white/[0.05] hover:text-white focus-visible:ring-2 focus-visible:ring-orange/80"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-400 outline-none transition hover:bg-white/5 hover:text-white focus-visible:ring-2 focus-visible:ring-orange/80"
             >
               {isDesktopCollapsed ? (
                 <LuPanelLeftOpen className="text-xl" aria-hidden="true" />
@@ -380,16 +380,16 @@ export default function AdminLayout() {
           <aside
             ref={mobileDrawerRef}
             id="admin-mobile-sidebar"
-            className="relative h-full w-72 max-w-[85vw] overflow-y-auto border-r border-white/[0.06] bg-gradient-to-b from-gray-800 to-gray-900 px-3 py-4 shadow-2xl"
+            className="relative h-full w-72 max-w-[85vw] overflow-y-auto border-r border-white/6 bg-linear-to-b from-gray-800 to-gray-900 px-3 py-4 shadow-2xl"
           >
-            <div className="mb-5 flex h-10 items-center justify-between border-b border-white/[0.06] px-2 pb-4">
+            <div className="mb-5 flex h-10 items-center justify-between border-b border-white/6 px-2 pb-4">
               <span className="font-semibold text-white">Admin navigation</span>
               <button
                 ref={mobileCloseButtonRef}
                 type="button"
                 onClick={() => setIsMobileOpen(false)}
                 aria-label="Close admin navigation"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-400 outline-none transition hover:bg-white/[0.05] hover:text-white focus-visible:ring-2 focus-visible:ring-orange/80"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-400 outline-none transition hover:bg-white/5 hover:text-white focus-visible:ring-2 focus-visible:ring-orange/80"
               >
                 <LuX className="text-xl" aria-hidden="true" />
               </button>

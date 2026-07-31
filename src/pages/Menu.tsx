@@ -5,12 +5,7 @@ import { useMenuItems } from '@/hooks/public/useMenuItems'
 import { useCategories } from '@/hooks/public/useCategories'
 import { useAddCartItem } from '@/hooks/public/useCart'
 import { formatCurrency } from '@/utils/formatters'
-
-const getImageUrl = (imagePath: string | null) => {
-  if (!imagePath) return null
-
-  return `${import.meta.env.VITE_BASE_URL ?? ''}${imagePath}`
-}
+import { getImageUrl } from '@/utils/imageUrl'
 
 function MenuSkeleton() {
   return (
