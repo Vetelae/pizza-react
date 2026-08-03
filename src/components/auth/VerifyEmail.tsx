@@ -4,19 +4,19 @@ interface VerifyEmailProps {
 
 export default function VerifyEmail({ onLoginClick }: VerifyEmailProps) {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+    <div className="flex flex-col gap-5">
+      <p className="text-sm text-zinc-600">
         We sent a verification link to your email. Click the link in the email to finish creating your account.
       </p>
 
-      <p className="text-sm text-zinc-500 dark:text-zinc-500">
+      <p className="text-sm text-zinc-500">
         Didn't receive it? Check your spam folder.
       </p>
 
-      <hr className="text-zinc-400" />
+      <hr className="my-2 border-zinc-200" />
 
       <div className="flex items-center justify-center">
-        <p className="text-zinc-900 dark:text-zinc-50 font-semibold">
+        <p className="font-semibold text-zinc-900">
           Already verified?
         </p>
       </div>
@@ -24,7 +24,8 @@ export default function VerifyEmail({ onLoginClick }: VerifyEmailProps) {
       <button
         type="button"
         onClick={onLoginClick}
-        className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+        className="text-sm font-medium text-orange transition-colors hover:text-amber-600
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange"
       >
         Sign in here
       </button>
