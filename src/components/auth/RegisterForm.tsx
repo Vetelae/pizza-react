@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import type { RegisterDto } from '@/types/auth'
 import { useRegister } from '@/hooks/public/useAuth'
 
@@ -8,8 +10,8 @@ interface RegisterFormProps {
 }
 
 export default function RegisterForm({ onLoginClick, onVerifyClick }: RegisterFormProps) {
-  const { mutate: registerUser, isPending, error } = useRegister() 
-
+  const [showPassword, setShowPassword] = useState(false)
+  const { mutate: registerUser, isPending, error } = useRegister()
   const {
     register,
     handleSubmit,
@@ -17,157 +19,117 @@ export default function RegisterForm({ onLoginClick, onVerifyClick }: RegisterFo
   } = useForm<RegisterDto>()
 
   const onSubmit = (data: RegisterDto) => {
-    registerUser(data, {
-      onSuccess: () => onVerifyClick()
-    })
+    registerUser(data, { onSuccess: () => onVerifyClick() })
   }
 
-    return (
+  const inputClassName = `rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm
+    text-zinc-900 transition-shadow placeholder:text-zinc-400 focus:border-orange
+    focus:outline-none focus:ring-2 focus:ring-orange/25`
+
+  return (
     <>
+      <p className="mb-6 text-sm text-zinc-600">
+        Create your account with your name, email and a password.
+      </p>
+
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
-        
-        {/* Form fields */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <label htmlFor="register-first-name" className="text-sm font-medium text-zinc-700">
             First name
           </label>
           <input
+            id="register-first-name"
             type="text"
             autoComplete="given-name"
             placeholder="First name"
-            {...register('firstName', {
-              required: 'First name is required',
-            })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
+            aria-invalid={!!errors.firstName}
+            {...register('firstName', { required: 'First name is required' })}
+            className={inputClassName}
           />
           {errors.firstName && (
-            <p className="text-xs text-red-500">{errors.firstName.message}</p>
-          )}
-        </div>
-
-         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            Last name
-          </label>
-          <input
-            type="text"
-            autoComplete="given-name"
-            placeholder="Last name"
-            {...register('lastName', {
-              required: 'Last name is required',
-            })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
-          />
-          {errors.lastName && (
-            <p className="text-xs text-red-500">{errors.lastName.message}</p>
+            <p className="text-xs text-red-700">{errors.firstName.message}</p>
           )}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <label htmlFor="register-last-name" className="text-sm font-medium text-zinc-700">
+            Last name
+          </label>
+          <input
+            id="register-last-name"
+            type="text"
+            autoComplete="family-name"
+            placeholder="Last name"
+            aria-invalid={!!errors.lastName}
+            {...register('lastName', { required: 'Last name is required' })}
+            className={inputClassName}
+          />
+          {errors.lastName && (
+            <p className="text-xs text-red-700">{errors.lastName.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="register-email" className="text-sm font-medium text-zinc-700">
             Email
           </label>
           <input
+            id="register-email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
+            aria-invalid={!!errors.email}
             {...register('email', {
               required: 'Email is required',
               pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' },
             })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
+            className={inputClassName}
           />
           {errors.email && (
-            <p className="text-xs text-red-500">{errors.email.message}</p>
+            <p className="text-xs text-red-700">{errors.email.message}</p>
           )}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            Phone number
-          </label>
-          <input
-            type="tel"
-            autoComplete="tel"
-            placeholder="Phone number (optional)"
-            {...register('phoneNumber', {
-              minLength: { value: 7, message: 'Minimum 7 characters' },
-              maxLength: { value: 15, message: 'Maximum 15 characters' },
-              setValueAs: (value) => value.trim() === '' ? null : value.trim(),
-            })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
-          />
-          {errors.phoneNumber && (
-            <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            Address
-          </label>
-          <input
-            type="text"
-            autoComplete="street-address"
-            placeholder="Address (optional)"
-            {...register('address', {
-              minLength: { value: 5, message: 'Minimum 5 characters' },
-              maxLength: { value: 100, message: 'Maximum 100 characters' },
-              setValueAs: (value) => value.trim() === '' ? null : value.trim(),
-            })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
-          />
-          {errors.address && (
-            <p className="text-xs text-red-500">{errors.address.message}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <label htmlFor="register-password" className="text-sm font-medium text-zinc-700">
             Password
           </label>
-          <input
-            type="password"
-            autoComplete="current-password"
-            placeholder="••••••••"
-            {...register('password', {
-              required: 'Password is required',
-              minLength: { value: 8, message: 'Minimum 8 characters' },
-            })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
-          />
+          <div className="relative">
+            <input
+              id="register-password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              placeholder="••••••••"
+              aria-describedby="register-password-hint"
+              aria-invalid={!!errors.password}
+              {...register('password', {
+                required: 'Password is required',
+                minLength: { value: 8, message: 'Minimum 8 characters' },
+              })}
+              className={`${inputClassName} w-full pr-12`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              className="absolute inset-y-0 right-0 flex w-11 items-center justify-center
+                rounded-r-lg text-zinc-500 transition-colors hover:text-zinc-900
+                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange"
+            >
+              {showPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
+            </button>
+          </div>
+          <p id="register-password-hint" className="text-xs text-zinc-500">
+            Use at least 8 characters.
+          </p>
           {errors.password && (
-            <p className="text-xs text-red-500">{errors.password.message}</p>
+            <p className="text-xs text-red-700">{errors.password.message}</p>
           )}
         </div>
 
-        {/* API error */}
         {error && (
-          <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded-lg">
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
             {(error as Error).message ?? 'Something went wrong. Please try again.'}
           </p>
         )}
@@ -175,30 +137,26 @@ export default function RegisterForm({ onLoginClick, onVerifyClick }: RegisterFo
         <button
           type="submit"
           disabled={isPending}
-          className="mt-1 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900
-            rounded-lg py-2.5 text-sm font-medium
-            hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors
-            disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-1 rounded-lg bg-orange py-2.5 text-sm font-bold text-gray-950
+            transition-colors hover:bg-amber-400 focus-visible:outline-2
+            focus-visible:outline-offset-2 focus-visible:outline-orange
+            disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? 'Creating account…' : 'Create account'}
         </button>
 
-        <hr className="text-zinc-400 mt-5" />
+        <hr className="my-2 border-zinc-200" />
 
-        <div className="flex items-center justify-center mt-5">
-          <p className="text-zinc-900 font-semibold">
-            Already have an account?
-          </p>
-        </div>
+        <p className="text-center font-semibold text-zinc-900">Already have an account?</p>
 
         <button
           type="button"
           onClick={onLoginClick}
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+          className="text-sm font-medium text-orange transition-colors hover:text-amber-600
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange"
         >
           Sign in here
         </button>
-
       </form>
     </>
   )

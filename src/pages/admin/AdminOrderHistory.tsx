@@ -187,7 +187,7 @@ export default function AdminOrderHistory() {
                 value={searchInput}
                 maxLength={100}
                 onChange={(event) => setSearchInput(event.target.value)}
-                placeholder="Order number, name or phone"
+                placeholder="Order number or customer name"
                 className="h-10 w-full rounded border border-gray-600 bg-gray-900 pl-9 pr-3 text-sm text-white placeholder:text-gray-500 focus:border-orange focus:outline-none"
               />
             </span>

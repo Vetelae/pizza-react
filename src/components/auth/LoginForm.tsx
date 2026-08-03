@@ -22,59 +22,59 @@ export default function LoginForm({ onRegisterClick, onForgotClick }: LoginFormP
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
-        <p className="text-sm font-semibold text-zinc-900">Sign in with your email and password.</p>
-      </div>
+      <p className="mb-6 text-sm text-zinc-600">
+        Sign in with your email and password.
+      </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <label htmlFor="login-email" className="text-sm font-medium text-zinc-700">
             Email
           </label>
           <input
+            id="login-email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
+            aria-invalid={!!errors.email}
             {...register('email', {
               required: 'Email is required',
               pattern: { value: /\S+@\S+\.\S+/, message: 'Invalid email' },
             })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
+            className="rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm
+              text-zinc-900 transition-shadow placeholder:text-zinc-400
+              focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/25"
           />
           {errors.email && (
-            <p className="text-xs text-red-500">{errors.email.message}</p>
+            <p className="text-xs text-red-700">{errors.email.message}</p>
           )}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <label htmlFor="login-password" className="text-sm font-medium text-zinc-700">
             Password
           </label>
           <input
+            id="login-password"
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"
+            aria-invalid={!!errors.password}
             {...register('password', {
               required: 'Password is required',
               minLength: { value: 8, message: 'Minimum 8 characters' },
             })}
-            className="border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm
-              bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100
-              placeholder:text-zinc-400
-              focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-zinc-100/10
-              transition-shadow"
+            className="rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm
+              text-zinc-900 transition-shadow placeholder:text-zinc-400
+              focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/25"
           />
           {errors.password && (
-            <p className="text-xs text-red-500">{errors.password.message}</p>
+            <p className="text-xs text-red-700">{errors.password.message}</p>
           )}
         </div>
 
         {error && (
-          <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded-lg">
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
             {(error as Error).message ?? 'Something went wrong. Please try again.'}
           </p>
         )}
@@ -82,10 +82,10 @@ export default function LoginForm({ onRegisterClick, onForgotClick }: LoginFormP
         <button
           type="submit"
           disabled={isPending}
-          className="mt-1 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-900
-            rounded-lg py-2.5 text-sm font-medium
-            hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors
-            disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-1 rounded-lg bg-orange py-2.5 text-sm font-bold text-gray-950
+            transition-colors hover:bg-amber-400 focus-visible:outline-2
+            focus-visible:outline-offset-2 focus-visible:outline-orange
+            disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? 'Signing in…' : 'Sign in'}
         </button>
@@ -93,23 +93,23 @@ export default function LoginForm({ onRegisterClick, onForgotClick }: LoginFormP
         <button
           type="button"
           onClick={onForgotClick}
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+          className="text-sm font-medium text-orange transition-colors hover:text-amber-600
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange"
         >
           Forgot password?
         </button>
 
-        <hr className="text-zinc-400 mt-5" />
+        <hr className="my-2 border-zinc-200" />
 
-        <div className="flex items-center justify-center mt-5">
-          <p className="text-zinc-900 font-semibold">
-            Don't have an account yet?
-          </p>
-        </div>
+        <p className="text-center font-semibold text-zinc-900">
+          Don&apos;t have an account yet?
+        </p>
 
         <button
           type="button"
           onClick={onRegisterClick}
-          className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+          className="text-sm font-medium text-orange transition-colors hover:text-amber-600
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange"
         >
           Register here
         </button>
