@@ -1,5 +1,5 @@
 import type { ApplicationUser } from './applicationUser'
-import type { OrderItem, CreateOrderItemDto } from './orderItem'
+import type { OrderItem } from './orderItem'
 import { OrderType, OrderStatus, PaymentMethod } from './enums'
 import type { OrderStatusName } from './enums'
 
@@ -95,17 +95,6 @@ export interface CustomerOrderStatusChanged {
     oldStatus: OrderStatusName;
     newStatus: OrderStatusName;
     changedAt: string;
-}
-
-export interface CreateOrderDto {
-    customerName: string
-    customerEmail: string
-    customerPhone: string
-    deliveryAddress: string | null
-    type: OrderType
-    paymentMethod: PaymentMethod
-    notes: string | null
-    items: CreateOrderItemDto[]
 }
 
 export interface UpdateOrderDto {
