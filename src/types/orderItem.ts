@@ -13,11 +13,6 @@ export interface OrderItem {
     order?: Order;
 }
 
-export interface CreateOrderItemDto {
-    menuItemId: number
-    quantity: number
-}
-
 // DTO (API shape)
 export interface OrderItemDto {
     menuItemId: number
