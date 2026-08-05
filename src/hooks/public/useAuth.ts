@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { authApi } from '@/api/public/authApi'
 import { useAuthStore } from '@/store/authStore'
 import type { ForgotPasswordDto, LoginDto, RegisterDto, ResetPasswordDto, UpdateProfileDto } from '@/types/auth'
@@ -18,6 +19,7 @@ export const useLogin = () => {
         role: data.role as 'Admin' | 'Guest',
       })
       closeLogin()
+      toast.success('Welcome back! You’re signed in.')
       navigate('/')
     },
   })
@@ -31,9 +33,18 @@ export const useLogout = () => {
     mutationFn: () => {
       return authApi.logout({ refreshToken: refreshToken! })
     },
-    onSettled: () => {
+    onSuccess: () => {
       clearAuth()
       navigate('/home')
+      toast.success('You’ve been signed out.')
+    },
+    onError: () => {
+      clearAuth()
+      navigate('/home')
+      toast.warning(
+        'Signed out on this device, but the server session could not be closed.',
+        { duration: 6000 }
+      )
     },
   })
 }
