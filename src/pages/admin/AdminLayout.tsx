@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import type { IconType } from 'react-icons'
-import { Toaster } from 'sonner'
 import {
   LuClipboardList,
   LuHistory,
@@ -404,32 +403,6 @@ export default function AdminLayout() {
           </aside>
         </div>
       )}
-
-      <Toaster
-        theme="dark"
-        position="top-right"
-        duration={4000}
-        visibleToasts={4}
-        closeButton
-        offset={{ top: 80, right: 24 }}
-        mobileOffset={{ top: 76, right: 12, left: 12 }}
-        containerAriaLabel="Admin notifications"
-        toastOptions={{
-          classNames: {
-            toast:
-              '!border-gray-700 !bg-gray-800 !font-sans !text-gray-100 !shadow-2xl',
-            title: '!font-semibold !text-gray-100',
-            description: '!text-gray-300',
-            success:
-              '!border-emerald-800/80 [&_[data-icon]]:!text-emerald-300',
-            warning:
-              '!border-amber-700/80 [&_[data-icon]]:!text-amber-300',
-            error: '!border-red-800/80 [&_[data-icon]]:!text-red-300',
-            closeButton:
-              '!border-gray-600 !bg-gray-900 !text-gray-300 hover:!bg-gray-700 hover:!text-white',
-          },
-        }}
-      />
     </div>
   )
 }
