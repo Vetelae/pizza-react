@@ -24,6 +24,16 @@ body {
   min-height: 100vh;
 }
 
+@media (max-width: 639px) {
+  [data-sonner-toaster] {
+    width: calc(100vw - 1.5rem) !important;
+  }
+
+  [data-sonner-toast] {
+    width: 100% !important;
+  }
+}
+
 h1 {
   font-size: 2.0em;
   line-height: 1.1;

@@ -5,13 +5,13 @@ interface CategoriesTableProps {
   isLoading: boolean;
   isError: boolean;
   onEdit: (category: Category) => void;
-  onDelete: (id: number) => void;
+  onDelete: (category: Category) => void;
 }
 
 interface CategoryRowProps {
   category: Category;
   onEdit: (category: Category) => void;
-  onDelete: (id: number) => void;
+  onDelete: (category: Category) => void;
 }
 
 export function CategoriesTable({
@@ -100,7 +100,7 @@ function CategoryRow({ category, onEdit, onDelete }: CategoryRowProps) {
         </button>
         <button
           type="button"
-          onClick={() => onDelete(category.id)}
+          onClick={() => onDelete(category)}
           className="rounded border border-red-800 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-950/40"
         >
           Delete

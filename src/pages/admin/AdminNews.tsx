@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import { toast } from "sonner";
 import { useCreateNews, useDeleteNews, useUpdateNews } from "@/hooks/admin/useAdminNews";
 import { useNews } from "@/hooks/public/useNews";
 import { NewsTable } from "@/components/admin/news/NewsTable";
 import { NewsFormModal } from "@/components/admin/news/NewsFormModal";
 import type { NewsFormValues } from "@/components/admin/news/NewsFormModal";
 import type { News } from "@/types/news";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 export default function AdminNews() {
   const { data: news, isLoading, isError } = useNews();
@@ -16,6 +18,7 @@ export default function AdminNews() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNews, setEditingNews] = useState<News | null>(null);
+  const [newsToDelete, setNewsToDelete] = useState<News | null>(null);
 
   const handleAdd = () => {
     setEditingNews(null);
@@ -32,11 +35,26 @@ export default function AdminNews() {
     setEditingNews(null);
   };
 
-  const handleDelete = (id: number) => {
-  if (window.confirm("Are you sure you want to delete this news article?")) {
-    deleteNews.mutate(id);
-  }
-};
+  const handleDelete = (newsArticle: News) => {
+    setNewsToDelete(newsArticle);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!newsToDelete) return;
+
+    const newsArticle = newsToDelete;
+    deleteNews.mutate(newsArticle.id, {
+      onSuccess: () => {
+        setNewsToDelete(null);
+        toast.success(`News article “${newsArticle.title}” deleted successfully.`);
+      },
+      onError: () => {
+        toast.error(`Couldn’t delete news article “${newsArticle.title}”. Please try again.`, {
+          duration: 6000,
+        });
+      },
+    });
+  };
 
 const handleSubmit = (data: NewsFormValues) => {
   const payload = {
@@ -47,10 +65,30 @@ const handleSubmit = (data: NewsFormValues) => {
   if (editingNews) {
     updateNews.mutate(
       { id: editingNews.id, dto: payload },
-      { onSuccess: handleClose }
+      {
+        onSuccess: (updated) => {
+          handleClose();
+          toast.success(`News article “${updated.title}” updated successfully.`);
+        },
+        onError: () => {
+          toast.error("Couldn’t update the news article. Please try again.", {
+            duration: 6000,
+          });
+        },
+      }
     );
   } else {
-    createNews.mutate(payload, { onSuccess: handleClose });
+    createNews.mutate(payload, {
+      onSuccess: (created) => {
+        handleClose();
+        toast.success(`News article “${created.title}” added successfully.`);
+      },
+      onError: () => {
+        toast.error("Couldn’t add the news article. Please try again.", {
+          duration: 6000,
+        });
+      },
+    });
   }
 };
 
@@ -89,6 +127,16 @@ const handleSubmit = (data: NewsFormValues) => {
         onClose={handleClose}
         onSubmit={handleSubmit}
         isSubmitting={createNews.isPending || updateNews.isPending}
+      />
+      <ConfirmDialog
+        isOpen={newsToDelete !== null}
+        title="Delete news article?"
+        description={`Are you sure you want to delete “${newsToDelete?.title ?? ""}”? This action cannot be undone.`}
+        confirmLabel="Delete"
+        pendingLabel="Deleting…"
+        isPending={deleteNews.isPending}
+        onCancel={() => setNewsToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );

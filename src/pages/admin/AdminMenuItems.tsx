@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import { toast } from "sonner";
 import type { MenuItem } from "@/types/menuItem";
 import { useMenuItems } from "@/hooks/public/useMenuItems";
 import { useCategories } from "@/hooks/public/useCategories";
@@ -15,6 +16,7 @@ import {
   MenuItemFormModal,
   type MenuItemFormValues,
 } from "@/components/admin/menuItems/MenuItemFormModal";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 export default function AdminMenuItems() {
   const { data: menuItems, isLoading, isError } = useMenuItems();
@@ -27,6 +29,7 @@ export default function AdminMenuItems() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
+  const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItem | null>(null);
 
   const handleAdd = () => {
     setEditingMenuItem(null);
@@ -43,10 +46,25 @@ export default function AdminMenuItems() {
     setEditingMenuItem(null);
   };
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this menu item?")) {
-      deleteMenuItem.mutate(id);
-    }
+  const handleDelete = (menuItem: MenuItem) => {
+    setMenuItemToDelete(menuItem);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!menuItemToDelete) return;
+
+    const menuItem = menuItemToDelete;
+    deleteMenuItem.mutate(menuItem.id, {
+      onSuccess: () => {
+        setMenuItemToDelete(null);
+        toast.success(`Menu item “${menuItem.name}” deleted successfully.`);
+      },
+      onError: () => {
+        toast.error(`Couldn’t delete menu item “${menuItem.name}”. Please try again.`, {
+          duration: 6000,
+        });
+      },
+    });
   };
 
   const handleSubmit = (data: MenuItemFormValues) => {
@@ -68,11 +86,29 @@ export default function AdminMenuItems() {
             if (file) {
               uploadImage.mutate(
                 { id: updated.id, file },
-                { onSuccess: handleClose }
+                {
+                  onSuccess: () => {
+                    handleClose();
+                    toast.success(`Menu item “${updated.name}” updated successfully.`);
+                  },
+                  onError: () => {
+                    handleClose();
+                    toast.warning(
+                      `Menu item “${updated.name}” was saved, but the image upload failed. You can try again by editing it.`,
+                      { duration: 6000 }
+                    );
+                  },
+                }
               );
             } else {
               handleClose();
+              toast.success(`Menu item “${updated.name}” updated successfully.`);
             }
+          },
+          onError: () => {
+            toast.error("Couldn’t update the menu item. Please try again.", {
+              duration: 6000,
+            });
           },
         }
       );
@@ -84,11 +120,29 @@ export default function AdminMenuItems() {
             if (file) {
               uploadImage.mutate(
                 { id: created.id, file },
-                { onSuccess: handleClose }
+                {
+                  onSuccess: () => {
+                    handleClose();
+                    toast.success(`Menu item “${created.name}” added successfully.`);
+                  },
+                  onError: () => {
+                    handleClose();
+                    toast.warning(
+                      `Menu item “${created.name}” was saved, but the image upload failed. You can try again by editing it.`,
+                      { duration: 6000 }
+                    );
+                  },
+                }
               );
             } else {
               handleClose();
+              toast.success(`Menu item “${created.name}” added successfully.`);
             }
+          },
+          onError: () => {
+            toast.error("Couldn’t add the menu item. Please try again.", {
+              duration: 6000,
+            });
           },
         }
       );
@@ -135,6 +189,16 @@ export default function AdminMenuItems() {
         onClose={handleClose}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
+      />
+      <ConfirmDialog
+        isOpen={menuItemToDelete !== null}
+        title="Delete menu item?"
+        description={`Are you sure you want to delete “${menuItemToDelete?.name ?? ""}”? This action cannot be undone.`}
+        confirmLabel="Delete"
+        pendingLabel="Deleting…"
+        isPending={deleteMenuItem.isPending}
+        onCancel={() => setMenuItemToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );
