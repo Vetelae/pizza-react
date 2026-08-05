@@ -8,14 +8,14 @@ interface MenuItemsTableProps {
   isLoading: boolean;
   isError: boolean;
   onEdit: (menuItem: MenuItem) => void;
-  onDelete: (id: number) => void;
+  onDelete: (menuItem: MenuItem) => void;
 }
 
 interface MenuItemRowProps {
   menuItem: MenuItem;
   categories: Category[];
   onEdit: (menuItem: MenuItem) => void;
-  onDelete: (id: number) => void;
+  onDelete: (menuItem: MenuItem) => void;
 }
 
 export function MenuItemsTable({
@@ -140,7 +140,7 @@ function MenuItemRow({ menuItem, categories, onEdit, onDelete }: MenuItemRowProp
         </button>
         <button
           type="button"
-          onClick={() => onDelete(menuItem.id)}
+          onClick={() => onDelete(menuItem)}
           className="rounded border border-red-800 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-950/40"
         >
           Delete

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import { toast } from "sonner";
 
 import {
   useCreateCategory,
@@ -11,6 +12,7 @@ import { CategoriesTable } from "@/components/admin/categories/CategoriesTable";
 import type { Category } from "@/types/category";
 import { CategoryFormModal, type CategoryFormValues } from "@/components/admin/categories/CategoriesFormModal";
 import { useCategories } from "@/hooks/public/useCategories";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 
 export default function AdminCategories() {
   const { data: categories, isLoading, isError } = useCategories();
@@ -22,6 +24,7 @@ export default function AdminCategories() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
 
   const handleAdd = () => {
     setEditingCategory(null);
@@ -38,10 +41,25 @@ export default function AdminCategories() {
     setEditingCategory(null);
   };
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      deleteCategory.mutate(id);
-    }
+  const handleDelete = (category: Category) => {
+    setCategoryToDelete(category);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!categoryToDelete) return;
+
+    const category = categoryToDelete;
+    deleteCategory.mutate(category.id, {
+      onSuccess: () => {
+        setCategoryToDelete(null);
+        toast.success(`Category “${category.name}” deleted successfully.`);
+      },
+      onError: () => {
+        toast.error(`Couldn’t delete category “${category.name}”. Please try again.`, {
+          duration: 6000,
+        });
+      },
+    });
   };
 
   const handleSubmit = (data: CategoryFormValues) => {
@@ -56,11 +74,29 @@ export default function AdminCategories() {
             if (file) {
               uploadImage.mutate(
                 { id: updated.id, file },
-                { onSuccess: handleClose }
+                {
+                  onSuccess: () => {
+                    handleClose();
+                    toast.success(`Category “${updated.name}” updated successfully.`);
+                  },
+                  onError: () => {
+                    handleClose();
+                    toast.warning(
+                      `Category “${updated.name}” was saved, but the image upload failed. You can try again by editing it.`,
+                      { duration: 6000 }
+                    );
+                  },
+                }
               );
             } else {
               handleClose();
+              toast.success(`Category “${updated.name}” updated successfully.`);
             }
+          },
+          onError: () => {
+            toast.error("Couldn’t update the category. Please try again.", {
+              duration: 6000,
+            });
           },
         }
       );
@@ -73,11 +109,29 @@ export default function AdminCategories() {
             if (file) {
               uploadImage.mutate(
                 { id: created.id, file },
-                { onSuccess: handleClose }
+                {
+                  onSuccess: () => {
+                    handleClose();
+                    toast.success(`Category “${created.name}” added successfully.`);
+                  },
+                  onError: () => {
+                    handleClose();
+                    toast.warning(
+                      `Category “${created.name}” was saved, but the image upload failed. You can try again by editing it.`,
+                      { duration: 6000 }
+                    );
+                  },
+                }
               );
             } else {
               handleClose();
+              toast.success(`Category “${created.name}” added successfully.`);
             }
+          },
+          onError: () => {
+            toast.error("Couldn’t add the category. Please try again.", {
+              duration: 6000,
+            });
           },
         }
       );
@@ -124,6 +178,16 @@ export default function AdminCategories() {
         onClose={handleClose}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
+      />
+      <ConfirmDialog
+        isOpen={categoryToDelete !== null}
+        title="Delete category?"
+        description={`Are you sure you want to delete “${categoryToDelete?.name ?? ""}”? This action cannot be undone.`}
+        confirmLabel="Delete"
+        pendingLabel="Deleting…"
+        isPending={deleteCategory.isPending}
+        onCancel={() => setCategoryToDelete(null)}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );

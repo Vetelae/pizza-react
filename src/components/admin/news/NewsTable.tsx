@@ -6,13 +6,13 @@ interface NewsTableProps {
   isLoading: boolean;
   isError: boolean;
   onEdit: (news: News) => void;
-  onDelete: (id: number) => void;
+  onDelete: (news: News) => void;
 }
 
 interface NewsRowProps {
   news: News;
   onEdit: (news: News) => void;
-  onDelete: (id: number) => void;
+  onDelete: (news: News) => void;
 }
 
 export function NewsTable({
@@ -95,7 +95,7 @@ function NewsRow({ news, onEdit, onDelete }: NewsRowProps) {
         </button>
         <button
           type="button"
-          onClick={() => onDelete(news.id)}
+          onClick={() => onDelete(news)}
           className="rounded border border-red-800 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-950/40"
         >
           Delete
