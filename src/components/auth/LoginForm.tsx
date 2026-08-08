@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import type { LoginDto } from '@/types/auth'
 import { useLogin } from '@/hooks/public/useAuth'
@@ -5,6 +6,14 @@ import { useLogin } from '@/hooks/public/useAuth'
 interface LoginFormProps {
   onRegisterClick: () => void
   onForgotClick: () => void
+}
+
+const getLoginErrorMessage = (error: unknown) => {
+  if (axios.isAxiosError(error) && error.response?.status === 401) {
+    return 'Invalid email or password.'
+  }
+
+  return 'Unable to sign in. Please try again.'
 }
 
 export default function LoginForm({ onRegisterClick, onForgotClick }: LoginFormProps) {
@@ -74,8 +83,11 @@ export default function LoginForm({ onRegisterClick, onForgotClick }: LoginFormP
         </div>
 
         {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-            {(error as Error).message ?? 'Something went wrong. Please try again.'}
+          <p
+            role="alert"
+            className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+          >
+            {getLoginErrorMessage(error)}
           </p>
         )}
 

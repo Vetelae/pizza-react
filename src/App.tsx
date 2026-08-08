@@ -20,10 +20,12 @@ import AdminNews from './pages/admin/AdminNews'
 import Navbar from './components/NavBar'
 import Profile from './pages/Profile'
 import { ProtectedGuestRoute } from '@/components/user/ProtectedGuestRoute'
+import DocumentTitle from './components/DocumentTitle'
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col bg-powder">
+      <DocumentTitle />
       <Navbar />
        <main className="flex-1 pt-16">
       <Routes>
