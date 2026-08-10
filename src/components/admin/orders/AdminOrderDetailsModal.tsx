@@ -278,7 +278,7 @@ export default function AdminOrderDetailsModal({
                             type="button"
                             disabled={isChangingStatus}
                             onClick={cancelOrder}
-                            className="h-9 rounded bg-red-600 px-3 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-60"
+                            className="inline-flex h-9 items-center justify-center rounded bg-red-600 px-3 text-center text-sm font-bold leading-tight text-white hover:bg-red-500 disabled:opacity-60"
                           >
                             {isChangingStatus ? 'Cancelling...' : 'Confirm cancel'}
                           </button>
