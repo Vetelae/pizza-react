@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import ProfileOrderHistory from '@/components/customer/orders/ProfileOrderHistory'
 import { useProfile, useUpdateProfile } from '@/hooks/public/useAuth'
 import type { UpdateProfileDto } from '@/types/auth'
@@ -40,6 +41,8 @@ export default function Profile() {
       phoneNumber: updatedProfile.phoneNumber ?? '',
       address: updatedProfile.address ?? '',
     })
+
+    toast.success('Profile updated successfully.')
   }
 
   const inputClass = (hasError = false) =>
@@ -147,10 +150,6 @@ export default function Profile() {
 
             <div className="mt-5 flex flex-col gap-3 border-t border-gray-700 pt-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-h-5">
-                {updateProfile.isSuccess && !isDirty && (
-                  <p className="text-sm text-green-400">Profile updated.</p>
-                )}
-
                 {updateProfile.isError && (
                   <p className="text-sm text-red-400">
                     Could not update your profile. Please try again.
