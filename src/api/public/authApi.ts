@@ -23,13 +23,13 @@ export const authApi = {
 
   // ME
   me: async (): Promise<UserProfileDto> => {
-    const { data } = await axiosClient.get<UserProfileDto>('/auth/me')
+    const { data } = await axiosClient.get<UserProfileDto>('/user/me')
     return data
   },
 
   // UPDATE ME
   updateMe: async (data: UpdateProfileDto): Promise<UserProfileDto> => {
-    const response = await axiosClient.put<UserProfileDto>('/auth/me', data)
+    const response = await axiosClient.put<UserProfileDto>('/user/me', data)
     return response.data
   },
 
