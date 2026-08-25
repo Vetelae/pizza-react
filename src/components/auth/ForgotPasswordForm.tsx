@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import type { ForgotPasswordDto } from '@/types/auth'
 import { useForgotPassword } from '@/hooks/public/useAuth'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 interface ForgotPasswordFormProps {
   onLoginClick: () => void
@@ -81,7 +82,9 @@ export default function ForgotPasswordForm({ onLoginClick }: ForgotPasswordFormP
 
       {error && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {(error as Error).message ?? 'Something went wrong. Please try again.'}
+          {isRateLimitError(error)
+            ? 'Too many reset requests. Please wait before requesting another link.'
+            : (error as Error).message ?? 'Something went wrong. Please try again.'}
         </p>
       )}
 

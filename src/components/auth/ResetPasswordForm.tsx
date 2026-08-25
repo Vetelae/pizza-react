@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import type { ResetPasswordDto } from '@/types/auth'
 import { useResetPassword } from '@/hooks/public/useAuth'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 export default function ResetPasswordForm() {
   const [searchParams] = useSearchParams()
@@ -123,7 +124,9 @@ export default function ResetPasswordForm() {
 
       {error && (
         <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950/30 px-3 py-2 rounded-lg">
-          {(error as Error).message ?? 'Something went wrong. Please try again.'}
+          {isRateLimitError(error)
+            ? 'Too many password reset attempts. Please wait and try again.'
+            : (error as Error).message ?? 'Something went wrong. Please try again.'}
         </p>
       )}
 

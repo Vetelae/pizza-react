@@ -6,6 +6,7 @@ import { useCategories } from '@/hooks/public/useCategories'
 import { useAddCartItem } from '@/hooks/public/useCart'
 import { formatCurrency } from '@/utils/formatters'
 import { getImageUrl } from '@/utils/imageUrl'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 function MenuSkeleton() {
   return (
@@ -40,7 +41,7 @@ interface MenuCardProps {
   item: MenuItem
   isAdding: boolean
   isAdded: boolean
-  hasAddError: boolean
+  addErrorMessage: string | null
   disableAdd: boolean
   onAdd: (item: MenuItem) => void
 }
@@ -49,7 +50,7 @@ function MenuCard({
   item,
   isAdding,
   isAdded,
-  hasAddError,
+  addErrorMessage,
   disableAdd,
   onAdd,
 }: MenuCardProps) {
@@ -126,9 +127,9 @@ function MenuCard({
           </span>
         </button>
 
-        {hasAddError && (
+        {addErrorMessage && (
           <p role="alert" className="mt-3 text-center text-sm text-red-300">
-            Couldn&apos;t add this item. Please try again.
+            {addErrorMessage}
           </p>
         )}
       </div>
@@ -141,6 +142,7 @@ function Menu() {
     data: menuItems,
     isLoading: menuItemsLoading,
     isError: menuItemsError,
+    error: menuItemsQueryError,
     isFetching: menuItemsFetching,
     refetch: refetchMenuItems,
   } = useMenuItems()
@@ -148,6 +150,7 @@ function Menu() {
     data: categories,
     isLoading: categoriesLoading,
     isError: categoriesError,
+    error: categoriesQueryError,
     isFetching: categoriesFetching,
     refetch: refetchCategories,
   } = useCategories()
@@ -155,7 +158,10 @@ function Menu() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null)
   const [addingItemId, setAddingItemId] = useState<number | null>(null)
   const [addedItemId, setAddedItemId] = useState<number | null>(null)
-  const [addErrorItemId, setAddErrorItemId] = useState<number | null>(null)
+  const [addError, setAddError] = useState<{
+    itemId: number
+    message: string
+  } | null>(null)
   const stickyNavRef = useRef<HTMLDivElement>(null)
   const addedFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
@@ -234,7 +240,7 @@ function Menu() {
     if (!item.isAvailable || addCartItem.isPending) return
 
     setAddingItemId(item.id)
-    setAddErrorItemId(null)
+    setAddError(null)
 
     try {
       await addCartItem.mutateAsync({
@@ -250,8 +256,13 @@ function Menu() {
       addedFeedbackTimeoutRef.current = setTimeout(() => {
         setAddedItemId(null)
       }, 1800)
-    } catch {
-      setAddErrorItemId(item.id)
+    } catch (error) {
+      setAddError({
+        itemId: item.id,
+        message: isRateLimitError(error)
+          ? 'You’re adding items too quickly. Please wait and try again.'
+          : 'Couldn’t add this item. Please try again.',
+      })
     } finally {
       setAddingItemId(null)
     }
@@ -260,6 +271,9 @@ function Menu() {
   const isLoading = menuItemsLoading || categoriesLoading
   const isError = menuItemsError || categoriesError
   const isRetrying = menuItemsFetching || categoriesFetching
+  const isRateLimited =
+    isRateLimitError(menuItemsQueryError) ||
+    isRateLimitError(categoriesQueryError)
 
   return (
     <div className="min-h-screen bg-powder">
@@ -341,7 +355,9 @@ function Menu() {
               We couldn&apos;t load the menu
             </h2>
             <p className="mt-3 text-gray-600">
-              Please check your connection and try again.
+              {isRateLimited
+                ? 'The menu is receiving too many requests. Please wait and try again.'
+                : 'Please check your connection and try again.'}
             </p>
             <button
               type="button"
@@ -411,7 +427,9 @@ function Menu() {
                         item={item}
                         isAdding={addingItemId === item.id}
                         isAdded={addedItemId === item.id}
-                        hasAddError={addErrorItemId === item.id}
+                        addErrorMessage={
+                          addError?.itemId === item.id ? addError.message : null
+                        }
                         disableAdd={addCartItem.isPending}
                         onAdd={handleAddToCart}
                       />

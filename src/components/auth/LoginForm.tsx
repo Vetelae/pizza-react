@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import type { LoginDto } from '@/types/auth'
 import { useLogin } from '@/hooks/public/useAuth'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 interface LoginFormProps {
   onRegisterClick: () => void
@@ -9,6 +10,10 @@ interface LoginFormProps {
 }
 
 const getLoginErrorMessage = (error: unknown) => {
+  if (isRateLimitError(error)) {
+    return 'Too many sign-in attempts. Please wait and try again.'
+  }
+
   if (axios.isAxiosError(error) && error.response?.status === 401) {
     return 'Invalid email or password.'
   }

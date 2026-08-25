@@ -8,6 +8,7 @@ import { OrderType, PaymentMethod } from '@/types/enums'
 import { useProfile } from '@/hooks/public/useAuth'
 import { useAuthStore } from '@/store/authStore'
 import { formatCurrency } from '@/utils/formatters'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 interface CheckoutViewProps {
   onBack: () => void
@@ -58,12 +59,16 @@ export default function CheckoutView({
   }, [getValues, isAuthenticated, profile, setValue])
 
   const onSubmit = async (data: CheckoutDto) => {
-    const order = await checkout.mutateAsync(data)
-    onClose()
-    const search = order.lookupToken
-      ? `?token=${encodeURIComponent(order.lookupToken)}`
-      : ''
-    navigate(`/orders/${order.id}${search}`)
+    try {
+      const order = await checkout.mutateAsync(data)
+      onClose()
+      const search = order.lookupToken
+        ? `?token=${encodeURIComponent(order.lookupToken)}`
+        : ''
+      navigate(`/orders/${order.id}${search}`)
+    } catch {
+      // The mutation state renders the contextual error below.
+    }
   }
 
   const items = cart?.items ?? []
@@ -341,7 +346,9 @@ export default function CheckoutView({
           </button>
           {checkout.isError && (
             <p role="alert" className="mt-2 text-center text-xs text-red-500">
-              Something went wrong. Please try again.
+              {isRateLimitError(checkout.error)
+                ? 'Please wait before trying to place another order.'
+                : 'Something went wrong. Please try again.'}
             </p>
           )}
         </div>

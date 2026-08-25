@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 import pizzaJpeg from '../assets/images/pizza.jpeg'
 import ig from '../assets/images/ig.png'
 import { useNews } from '@/hooks/public/useNews'
+import { isRateLimitError } from '@/utils/apiErrors'
 import {
   formatDateWithWeekday,
   toDateInputValue,
@@ -100,7 +101,7 @@ function useTodayDateValue() {
 }
 
 function Home() {
-  const { data: news, isLoading, isError } = useNews()
+  const { data: news, isLoading, isError, error } = useNews()
   const today = useTodayDateValue()
   const featuredNews = useMemo(
     () =>
@@ -169,8 +170,9 @@ function Home() {
 
               {isError && (
                 <p className="leading-7 text-gray-100">
-                  We couldn&apos;t load the latest news right now. Please try
-                  again later.
+                  {isRateLimitError(error)
+                    ? 'The latest news is receiving too many requests. Please try again shortly.'
+                    : 'We couldn’t load the latest news right now. Please try again later.'}
                 </p>
               )}
 

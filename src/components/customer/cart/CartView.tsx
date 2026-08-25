@@ -4,13 +4,21 @@ import { useCart, useRemoveCartItem, useUpdateCartItem } from '@/hooks/public/us
 import { useMenuItems } from '@/hooks/public/useMenuItems'
 import { formatCurrency } from '@/utils/formatters'
 import { getImageUrl } from '@/utils/imageUrl'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 interface CartViewProps {
   onCheckout: () => void
 }
 
 export default function CartView({ onCheckout }: CartViewProps) {
-  const { data: cart, isLoading } = useCart()
+  const {
+    data: cart,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+    refetch,
+  } = useCart()
   const { data: menuItems } = useMenuItems()
   const updateItem = useUpdateCartItem()
   const removeItem = useRemoveCartItem()
@@ -27,6 +35,29 @@ export default function CartView({ onCheckout }: CartViewProps) {
     return (
       <div className="flex flex-1 items-center justify-center" role="status">
         <p className="text-sm font-medium text-orange">Loading cart...</p>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
+        <p role="alert" className="text-sm text-red-500">
+          {isRateLimitError(error)
+            ? 'The cart is receiving too many requests. Please wait and try again.'
+            : 'We couldn’t load your cart. Please try again.'}
+        </p>
+        <button
+          type="button"
+          onClick={() => void refetch()}
+          disabled={isFetching}
+          className="rounded-lg bg-orange px-4 py-2 text-sm font-bold text-gray-900
+            transition hover:brightness-110 focus-visible:outline-2
+            focus-visible:outline-offset-2 focus-visible:outline-orange
+            disabled:cursor-wait disabled:opacity-70"
+        >
+          {isFetching ? 'Trying again...' : 'Try again'}
+        </button>
       </div>
     )
   }
@@ -70,6 +101,11 @@ export default function CartView({ onCheckout }: CartViewProps) {
           const hasRemoveError =
             removeItem.isError && removeItem.variables === item.id
           const hasMutationError = hasUpdateError || hasRemoveError
+          const mutationError = hasUpdateError
+            ? updateItem.error
+            : hasRemoveError
+              ? removeItem.error
+              : null
 
           return (
             <li
@@ -186,7 +222,9 @@ export default function CartView({ onCheckout }: CartViewProps) {
 
               {hasMutationError && (
                 <p role="alert" className="mt-2 text-xs text-red-300">
-                  Couldn&apos;t update this item. Please try again.
+                  {isRateLimitError(mutationError)
+                    ? 'You’re updating the cart too quickly. Please wait and try again.'
+                    : 'Couldn’t update this item. Please try again.'}
                 </p>
               )}
             </li>

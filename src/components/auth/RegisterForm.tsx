@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import type { RegisterDto } from '@/types/auth'
 import { useRegister } from '@/hooks/public/useAuth'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 interface RegisterFormProps {
   onLoginClick: () => void
@@ -130,7 +131,9 @@ export default function RegisterForm({ onLoginClick, onVerifyClick }: RegisterFo
 
         {error && (
           <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-            {(error as Error).message ?? 'Something went wrong. Please try again.'}
+            {isRateLimitError(error)
+              ? 'Too many registration attempts. Please wait and try again.'
+              : (error as Error).message ?? 'Something went wrong. Please try again.'}
           </p>
         )}
 

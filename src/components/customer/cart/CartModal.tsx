@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import type { MenuItem } from "@/types/menuItem";
 import { useAddCartItem } from "@/hooks/public/useCart";
 import { formatCurrency } from "@/utils/formatters";
+import { isRateLimitError } from "@/utils/apiErrors";
 
 interface CartModalProps {
   isOpen: boolean;
@@ -30,12 +31,14 @@ export function CartModal({ isOpen, menuItem, onClose }: CartModalProps) {
 
   if (!isOpen || !menuItem) return null;
 
-  const onSubmit = async (data: CartFormValues) => {
-    await addCartItem.mutateAsync({
-      menuItemId: menuItem.id,
-      quantity: data.quantity,
-    });
-    onClose();
+  const onSubmit = (data: CartFormValues) => {
+    addCartItem.mutate(
+      {
+        menuItemId: menuItem.id,
+        quantity: data.quantity,
+      },
+      { onSuccess: onClose },
+    );
   };
 
   return (
@@ -85,6 +88,14 @@ export function CartModal({ isOpen, menuItem, onClose }: CartModalProps) {
               <p className="mt-1 text-xs text-red-500">{errors.quantity.message}</p>
             )}
           </div>
+
+          {addCartItem.isError && (
+            <p role="alert" className="text-sm text-red-500">
+              {isRateLimitError(addCartItem.error)
+                ? "You’re adding items too quickly. Please wait and try again."
+                : "Couldn’t add this item. Please try again."}
+            </p>
+          )}
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-2">
