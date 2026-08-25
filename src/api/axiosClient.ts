@@ -86,7 +86,12 @@ const refreshAuthToken = async () => {
     return data.token
   } catch (refreshError) {
     processQueue(refreshError, null)
-    clearAuth()
+    if (
+      axios.isAxiosError(refreshError) &&
+      refreshError.response?.status === 401
+    ) {
+      clearAuth()
+    }
     throw refreshError
   } finally {
     isRefreshing = false

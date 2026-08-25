@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
 import { FaCheck, FaExclamationTriangle, FaSpinner } from 'react-icons/fa'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { isRateLimitError } from '@/utils/apiErrors'
 
 type ConfirmationTone = 'loading' | 'success' | 'error'
 
@@ -70,7 +71,7 @@ export default function ConfirmEmail() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const openLogin = useAuthStore((state) => state.openLogin)
-  const { mutate: confirmEmail, isPending, isSuccess, isError } = useConfirmEmail()
+  const { mutate: confirmEmail, isPending, isSuccess, isError, error } = useConfirmEmail()
   const hasFired = useRef(false)
 
   const userId = searchParams.get('userId')
@@ -100,7 +101,11 @@ export default function ConfirmEmail() {
         role="alert"
         tone="error"
         title="We couldn't verify your email"
-        description="This confirmation link may have expired or already been used."
+        description={
+          isRateLimitError(error)
+            ? 'Too many verification attempts. Please wait and try again.'
+            : 'This confirmation link may have expired or already been used.'
+        }
         icon={<FaExclamationTriangle />}
       >
         <button
